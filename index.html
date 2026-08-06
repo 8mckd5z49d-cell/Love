@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>想和你一起🫪 | 安淇 & 佳維</title>
+    <!-- Google Fonts & FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Sacramento&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #ff7b93;
+            --secondary-color: #ffb6c1;
+            --accent-color: #ff4d6d;
+            --bg-color: #fff5f6;
+            --text-color: #4a4a4a;
+            --card-bg: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.8;
+            padding-bottom: 60px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0 20px;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            color: var(--accent-color);
+            margin-bottom: 10px;
+        }
+
+        .section-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 25px rgba(255, 182, 193, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .section-title {
+            text-align: center;
+            color: var(--accent-color);
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '♡';
+            display: block;
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+        }
+
+        /* 戀愛計時器 */
+        .timer-box {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .timer-display {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .timer-unit {
+            background: rgba(255, 255, 255, 0.25);
+            padding: 10px 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+        }
+
+        .timer-unit span {
+            font-size: 1.8rem;
+            font-weight: bold;
+            display: block;
+        }
+
+        /* 男友獎盃 */
+        .trophy-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            text-align: center;
+        }
+
+        .trophy-card {
+            background: #fff8f9;
+            border: 2px solid #ffe1e6;
+            padding: 20px 10px;
+            border-radius: 15px;
+        }
+
+        .trophy-icon {
+            font-size: 2.5rem;
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+
+        /* 翻卡：喜歡你的理由 */
+        .reasons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+        }
+
+        .flip-card {
+            background-color: transparent;
+            height: 120px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+
+        .flip-card-front {
+            background-color: var(--secondary-color);
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .flip-card-back {
+            background-color: #fff0f3;
+            color: var(--accent-color);
+            transform: rotateY(180deg);
+            border: 1px solid var(--secondary-color);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        /* 吹熄蠟燭互動 */
+        .cake-container {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .candle {
+            width: 20px;
+            height: 60px;
+            background: linear-gradient(to bottom, #ff9a9e, #fecfef);
+            margin: 0 auto;
+            position: relative;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .flame {
+            width: 16px;
+            height: 26px;
+            background: #ff9d00;
+            border-radius: 50% 50% 20% 20%;
+            position: absolute;
+            top: -26px;
+            left: 2px;
+            box-shadow: 0 0 10px #ff9d00, 0 0 20px #ff0000;
+            animation: flicker 0.1s infinite alternate;
+            cursor: pointer;
+        }
+
+        .flame.off {
+            display: none;
+        }
+
+        @keyframes flicker {
+            0% { transform: scale(1) rotate(-2deg); }
+            100% { transform: scale(1.1) rotate(2deg); }
+        }
+
+        .cake-base {
+            width: 120px;
+            height: 50px;
+            background: #f7d6e0;
+            margin: 0 auto;
+            border-radius: 10px 10px 0 0;
+            border-bottom: 5px solid #f2b5d4;
+        }
+
+        /* 特權卡 */
+        .privilege-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .privilege-card {
+            background: #fff;
+            border: 2px dashed var(--secondary-color);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            position: relative;
+        }
+
+        .privilege-card h4 {
+            color: var(--accent-color);
+            margin-bottom: 5px;
+        }
+
+        /* 想和你一起清單 */
+        .todo-list {
+            list-style: none;
+        }
+
+        .todo-item {
+            padding: 10px 15px;
+            background: #fff0f3;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .todo-item input {
+            margin-right: 15px;
+            accent-color: var(--accent-color);
+            width: 18px;
+            height: 18px;
+        }
+
+        /* 小卡片（信封） */
+        .envelope-wrapper {
+            background: #ffccd5;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .letter-content {
+            display: none;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 15px;
+            text-align: left;
+            line-height: 2;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            white-space: pre-line;
+        }
+
+        /* 送禮按鈕 */
+        .gift-btn {
+            display: block;
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(45deg, #ff4d6d, #ff7b93);
+            color: white;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(255, 77, 109, 0.4);
+            transition: transform 0.2s;
+        }
+
+        .gift-btn:hover {
+            transform: scale(1.03);
+        }
+
+        /* 測驗樣式 */
+        .quiz-option {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .quiz-option:hover {
+            background: #ffe6ea;
+        }
+
+        .quiz-feedback {
+            margin-top: 10px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <header>
+        <h1>想和你一起🫪</h1>
+        <p>安淇 & 佳維 的專屬小天地</p>
+    </header>
+
+    <!-- 1. 我們的故事 & 戀愛計時器 -->
+    <section class="section-card">
+        <h2 class="section-title">我們的故事</h2>
+        <p>我們是在 3 月時認識的。那時候，佳維邀請我看電影，我也鼓起了勇氣答應了你。</p>
+        <br>
+        <p><strong>2025/06/07 第一次見面</strong><br>
+        你的開頭是：「妳好請問妳是余安淇嗎？」開始了我們的第一次約會。那時候我們看了第一部電影，我非常的緊張，只能認真看電影不敢回頭看你，但你卻一直偷偷地看我。電影結束後我們還一起吃了飯，我吃不下的東西你居然說要幫我吃完！我去上廁所出來，看到你用超級快的速度吃完，超級厲害的！後面你也送我去火車站，走的時候還貼心地留下雨傘「小黃」，還送了我一條巧克力。</p>
+        <br>
+        <p><strong>2025/06/14 甜蜜在一起</strong><br>
+        在 6/14 號你又再一次地約我見面，我們一起吃了拉麵，非常好吃！我很喜歡佳維的每一個動作都非常紳士，我還是很害羞嘿嘿。晚上你也跟我告白了，啊啊我還是從睡夢中醒來答應的！於是我們就在一起了～你用了短短三個月追到了我，我也相信你會給我帶來幸福！</p>
+
+        <div class="timer-box">
+            <h3>我們已經在一起了</h3>
+            <div class="timer-display">
+                <div class="timer-unit"><span id="days">0</span>天</div>
+                <div class="timer-unit"><span id="hours">0</span>時</div>
+                <div class="timer-unit"><span id="minutes">0</span>分</div>
+                <div class="timer-unit"><span id="seconds">0</span>秒</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. 愛情小測驗 -->
+    <section class="section-card">
+        <h2 class="section-title">愛情小測驗</h2>
+        <div id="quiz-container">
+            <!-- 題目會由 JS 自動渲染 -->
+        </div>
+    </section>
+
+    <!-- 3. 男友獎盃 -->
+    <section class="section-card">
+        <h2 class="section-title">佳維的專屬榮譽</h2>
+        <div class="trophy-grid">
+            <div class="trophy-card">
+                <div class="trophy-icon">🏆</div>
+                <h3>最佳男朋友獎</h3>
+            </div>
+            <div class="trophy-card">
+                <div class="trophy-icon">😇</div>
+                <h3>脾氣最好獎</h3>
+            </div>
+            <div class="trophy-card">
+                <div class="trophy-icon">🫂</div>
+                <h3>最佳抱抱獎</h3>
+            </div>
+            <div class="trophy-card">
+                <div class="trophy-icon">🎬</div>
+                <h3>最帥男主角</h3>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. 喜歡你的10個理由 -->
+    <section class="section-card">
+        <h2 class="section-title">喜歡你的 10 個理由</h2>
+        <p style="text-align: center; margin-bottom: 15px; font-size: 0.9rem; color: #888;">（點擊卡片翻面）</p>
+        <div class="reasons-grid">
+            <div class="flip-card" onclick="toggleFlip(this)">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">Reason 1</div>
+                    <div class="flip-card-back">總是很有耐心陪著我</div>
+                </div>
+            </div>
+            <div class="flip-card" onclick="toggleFlip(this)">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">Reason 2</div>
+                    <div class="flip-card-back">每個動作都超級紳士</div>
+                </div>
+            </div>
+            <div class="flip-card" onclick="toggleFlip(this)">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">Reason 3</div>
+                    <div class="flip-card-back">會默默記得我隨口說的小事</div>
+                </div>
+            </div>
+            <div class="flip-card" onclick="toggleFlip(this)">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">Reason 4</div>
+                    <div class="flip-card-back">吃不下的東西會幫我吃完</div>
+                </div>
+            </div>
+            <div class="flip-card" onclick="toggleFlip(this)">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">Reason 5</div>
+                    <div class="flip-card-back">走路時總是讓我走裡面</div>
+                </div>
+            </div>
+            <div class="flip-card" onclick="toggleFlip(this)">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">Reason 6</div>
+                    <div class="flip-card-back">不開心時會把我哄到笑出來</div>
+                </div>
+            </div>
+            <div class="flip-card" onclick="toggleFlip(this)">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">Reason 7</div>
+                    <div class="flip-card-back">讓我能安心地做自己與依賴</div>
+                </div>
+            </div>
+            <div class="flip-card" onclick="toggleFlip(this)">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">Reason 8</div>
+                    <div class="flip-card-back">會留雨傘「小黃」跟巧克力</div>
+                </div>
+            </div>
+            <div class="flip-card" onclick="toggleFlip(this)">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">Reason 9</div>
+                    <div class="flip-card-back">脾氣超級好又溫柔</div>
+                </div>
+            </div>
+            <div class="flip-card" onclick="toggleFlip(this)">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">Reason 10</div>
+                    <div class="flip-card-back">因為你是佳維，無可取代</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. 專屬互動小遊戲：吹熄蠟燭 & 戀愛特權卡 -->
+    <section class="section-card">
+        <h2 class="section-title">專屬互動遊戲</h2>
+        
+        <h3 style="text-align:center; margin-bottom: 10px;">🎂 許願儀式：點擊吹熄蠟燭</h3>
+        <div class="cake-container">
+            <div class="candle">
+                <div class="flame" id="flame" onclick="blowOutCandle()"></div>
+            </div>
+            <div class="cake-base"></div>
+            <p id="wish-text" style="margin-top: 15px; color: var(--accent-color); font-weight: bold;"></p>
+        </div>
+
+        <hr style="margin: 30px 0; border: none; border-top: 1px dashed #ffd1d7;">
+
+        <h3 style="text-align:center; margin-bottom: 15px;">🎟️ 佳維專屬戀愛特權卡</h3>
+        <div class="privilege-grid">
+            <div class="privilege-card">
+                <h4>無限抱抱券</h4>
+                <p>隨時隨地無條件兌換大擁抱</p>
+            </div>
+            <div class="privilege-card">
+                <h4>任意選禮物券</h4>
+                <p>挑選一件自己喜歡的小禮物</p>
+            </div>
+            <div class="privilege-card">
+                <h4>今天你怎樣都可以券</h4>
+                <p>限一天😈（全聽你的！）</p>
+            </div>
+            <div class="privilege-card">
+                <h4>撒嬌不拒絕券</h4>
+                <p>無論如何都要接受我的撒嬌</p>
+            </div>
+            <!-- 加碼實用特權卡 -->
+            <div class="privilege-card">
+                <h4>生氣免死金牌</h4>
+                <p>安淇無條件秒消氣一次</p>
+            </div>
+            <div class="privilege-card">
+                <h4>深夜宵夜點餐券</h4>
+                <p>想吃什麼安淇陪你/買給你</p>
+            </div>
+            <div class="privilege-card">
+                <h4>指定按摩服務券</h4>
+                <p>享有 15 分鐘專屬肩頸按摩</p>
+            </div>
+            <div class="privilege-card">
+                <h4>陪打遊戲消夜券</h4>
+                <p>今天暢玩遊戲不打擾還附宵夜</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. 標題：想和你一起🫪 -->
+    <section class="section-card">
+        <h2 class="section-title">想和你一起🫪</h2>
+        <ul class="todo-list">
+            <li class="todo-item"><input type="checkbox"> 一起去海邊看夕陽喝咖啡</li>
+            <li class="todo-item"><input type="checkbox"> 解鎖更多沒去過的城市旅行</li>
+            <li class="todo-item"><input type="checkbox"> 一起去吃遍各式各樣美味的拉麵</li>
+            <li class="todo-item"><input type="checkbox"> 在家裡窩著看一整天的電影與影集</li>
+            <li class="todo-item"><input type="checkbox"> 每年都要一起過生日與週年</li>
+            <li class="todo-item"><input type="checkbox"> 遇到困難時互相擁抱、一起面對</li>
+            <li class="todo-item"><input type="checkbox"> 一起牽手走過未來的每一個春夏秋冬</li>
+        </ul>
+    </section>
+
+    <!-- 7. 給佳維的小卡片 -->
+    <section class="section-card">
+        <h2 class="section-title">給佳維的小卡片</h2>
+        <div class="envelope-wrapper" onclick="toggleLetter()">
+            <div style="font-size: 2rem;">✉️</div>
+            <p><strong>佳維親啟（點擊開啟信封）</strong></p>
+            <div class="letter-content" id="letter">
+生日快樂，我最重要的你。
+
+其實我很少把這些話說得很完整，但我真的很想讓你知道，和你在一起之後，我變得很不一樣。以前的我可能比較容易不安、想很多，但你總是很有耐心地陪著我，慢慢讓我知道，原來有人可以這麼認真對待我、這麼在乎我的情緒。你會記得我隨口說過的小事，會在我想吃什麼的時候直接帶我去，會在我不開心的時候不讓我一個人撐著，總是把我哄到笑出來為止。
+
+我很喜歡跟你在一起的那些日常，不一定要去哪裡、不一定要做什麼特別的事，只要是跟你，就會變得很有意義。走路的時候你會讓我走裡面，吃東西的時候你會先顧我，很多小細節你都默默在做，這些我其實都有放在心裡，也一直很珍惜。你讓我覺得自己被保護、被照顧，也讓我很安心地做自己，甚至可以任性一點、依賴一點，因為我知道你會接住我。
+
+有時候我也會想，我是不是越來越離不開你了，但這種感覺不是壞的，而是因為你真的對我很好，好到我會開始期待未來有你在的每一天。謝謝你一直包容我、照顧我，也謝謝你讓我知道什麼叫做被愛。
+
+未來我也想變得更好，不只是被你照顧的人，而是可以陪著你、支持你的人。不管之後遇到什麼，我都希望我們可以一起面對，一起走很久很久。
+
+最後還是要再說一次，生日快樂。希望你的每一個願望都慢慢實現，而我也會一直在你身邊。
+            </div>
+        </div>
+    </section>
+
+    <!-- 9. 驚喜銜接到送禮環節 -->
+    <button class="gift-btn" onclick="triggerSurprise()">🎁 點擊解鎖專屬生日驚喜！</button>
+
+</div>
+
+<!-- 驚喜彈窗 -->
+<div class="modal" id="giftModal">
+    <div class="modal-content">
+        <h2>🎉 生日快樂佳維！🎉</h2>
+        <p style="margin: 20px 0; font-size: 1.1rem;">禮物已經為你準備好囉！<br>現在請向安淇領取你的專屬實體禮物吧 🎁✨</p>
+        <button onclick="closeModal()" style="padding: 10px 20px; background: var(--accent-color); color: white; border: none; border-radius: 20px; cursor: pointer;">開心收下 ❤️</button>
+    </div>
+</div>
+
+<script>
+    // 1. 戀愛計時器 (交往日: 2025/06/14)
+    const startDate = new Date('2025-06-14T00:00:00');
+    function updateTimer() {
+        const now = new Date();
+        const diff = now - startDate;
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((diff / 1000 / 60) % 60);
+        const seconds = Math.floor((diff / 1000) % 60);
+
+        document.getElementById('days').innerText = days;
+        document.getElementById('hours').innerText = hours;
+        document.getElementById('minutes').innerText = minutes;
+        document.getElementById('seconds').innerText = seconds;
+    }
+    setInterval(updateTimer, 1000);
+    updateTimer();
+
+    // 2. 愛情測驗
+    const quizData = [
+        {
+            q: "1. 我們的第一次見面，佳維講的第一句話是什麼？",
+            options: ["好久不見啊！", "妳好請問妳是余安淇嗎？", "今天天氣真好～", "妳今天很漂亮！"],
+            answer: 1
+        },
+        {
+            q: "2. 第一次看電影時，安淇去上廁所出來發現了什麼驚人場面？",
+            options: ["佳維在滑手機", "佳維把食物用超級快的速度吃完", "佳維睡著了", "佳維已經去買好手搖飲了"],
+            answer: 1
+        },
+        {
+            q: "3. 第一次見面離開時，佳維貼心留下了什麼？",
+            options: ["雨傘「小黃」跟巧克力", "外套跟外套口袋的糖果", "帽子與飲料", "一封手寫信"],
+            answer: 0
+        },
+        {
+            q: "4. 6/14 第二次見面時，我們一起去吃了什麼美味食物？",
+            options: ["火鍋", "牛排", "拉麵", "燒肉"],
+            answer: 2
+        },
+        {
+            q: "5. 安淇是在什麼樣的情況下答應佳維告白的？",
+            options: ["看著夜景害羞答應", "吃晚餐時高興答應", "從睡夢中醒來答應的", "收到花束時答應"],
+            answer: 2
+        }
+    ];
+
+    function renderQuiz() {
+        const container = document.getElementById('quiz-container');
+        quizData.forEach((item, index) => {
+            let optionsHTML = '';
+            item.options.forEach((opt, optIndex) => {
+                optionsHTML += `<button class="quiz-option" onclick="checkAnswer(${index}, ${optIndex})">${opt}</button>`;
+            });
+            container.innerHTML += `
+                <div style="margin-bottom: 20px;">
+                    <p><strong>${item.q}</strong></p>
+                    ${optionsHTML}
+                    <div class="quiz-feedback" id="feedback-${index}"></div>
+                </div>
+            `;
+        });
+    }
+    renderQuiz();
+
+    function checkAnswer(qIndex, optionIndex) {
+        const feedback = document.getElementById(`feedback-${qIndex}`);
+        if (optionIndex === quizData[qIndex].answer) {
+            const praises = ["老公你好棒！", "就知道老公最棒了啦～", "老公太神啦！"];
+            const randomPraise = praises[Math.floor(Math.random() * praises.length)];
+            feedback.style.color = "#2b9348";
+            feedback.innerText = "✨ " + randomPraise;
+        } else {
+            feedback.style.color = "#d90429";
+            feedback.innerText = "❌ 安淇老婆要心碎了哭哭";
+        }
+    }
+
+    // 4. 翻卡
+    function toggleFlip(card) {
+        card.classList.toggle('flipped');
+    }
+
+    // 5. 吹熄蠟燭
+    function blowOutCandle() {
+        const flame = document.getElementById('flame');
+        const wishText = document.getElementById('wish-text');
+        flame.classList.add('off');
+        wishText.innerText = "✨ 蠟燭熄滅囉！願佳維許的願望全部實現！✨";
+        confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
+    }
+
+    // 7. 信封展開
+    function toggleLetter() {
+        const letter = document.getElementById('letter');
+        letter.style.display = letter.style.display === 'block' ? 'none' : 'block';
+    }
+
+    // 9. 驚喜送禮
+    function triggerSurprise() {
+        confetti({
+            particleCount: 150,
+            spread: 100,
+            origin: { y: 0.6 }
+        });
+        document.getElementById('giftModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('giftModal').style.display = 'none';
+    }
+</script>
+
+</body>
+</html>
