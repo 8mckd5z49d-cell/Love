@@ -82,29 +82,51 @@
             letter-spacing: 1px;
         }
 
-        .start-btn {
-            margin-top: 40px;
-            padding: 14px 36px;
+        .intro-choice-box {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.5s ease;
+            pointer-events: none;
+        }
+
+        .intro-choice-box.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .choice-btn {
+            padding: 12px 28px;
             background: transparent;
             border: 1.5px solid var(--pink-soft);
             color: var(--pink-soft);
-            font-size: 1rem;
+            font-size: 0.95rem;
             border-radius: 50px;
             cursor: pointer;
-            transition: all 0.4s ease;
-            opacity: 0;
-            transform: translateY(10px);
+            transition: all 0.3s ease;
             letter-spacing: 1px;
         }
 
-        .start-btn.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .start-btn:active {
+        .choice-btn.yes {
             background: var(--pink-soft);
             color: var(--bg-dark);
+            font-weight: 700;
+        }
+
+        .choice-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* 警告小提示 */
+        .warning-text {
+            color: var(--pink-bright);
+            font-size: 0.9rem;
+            margin-top: 15px;
+            min-height: 24px;
+            font-weight: 700;
         }
 
         /* 區塊標題 */
@@ -149,16 +171,17 @@
             display: none;
             margin-top: 20px;
             text-align: left;
-            font-size: 0.95rem;
+            font-size: 0.92rem;
             color: var(--text-cream);
             line-height: 2;
             font-family: 'Noto Serif TC', serif;
             border-top: 1px dashed var(--card-border);
             padding-top: 20px;
+            white-space: pre-line;
             animation: fadeIn 1s ease forwards;
         }
 
-        /* 3. 我們的故事 (時間轴) */
+        /* 3. 我們的故事 (時間軸) */
         .timeline {
             position: relative;
             padding-left: 20px;
@@ -415,58 +438,66 @@
             align-items: center;
             gap: 12px;
             font-size: 0.92rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            color: var(--text-cream);
         }
 
-        .todo-item.checked {
-            border-color: var(--pink-soft);
-            background: rgba(255, 141, 161, 0.08);
-        }
-
-        .checkbox {
-            width: 18px;
-            height: 18px;
-            border: 1.5px solid var(--pink-soft);
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            color: transparent;
-            transition: all 0.2s;
-        }
-
-        .todo-item.checked .checkbox {
-            background: var(--pink-soft);
-            color: var(--bg-dark);
-        }
-
-        /* 9. 結尾 */
+        /* 9. 結尾與送禮物 */
         .ending-box {
             text-align: center;
-            margin-top: 60px;
-            padding: 30px 0;
+            margin-top: 50px;
+            padding: 30px 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-card);
+            backdrop-filter: blur(8px);
         }
 
         .ending-title {
             font-size: 1.35rem;
             color: var(--pink-soft);
             font-family: 'Noto Serif TC', serif;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             letter-spacing: 1px;
         }
 
-        .heart-beat {
-            font-size: 2.2rem;
-            display: inline-block;
-            margin-top: 15px;
-            animation: beat 1.3s infinite ease-in-out;
+        .gift-btn {
+            margin-top: 20px;
+            background: linear-gradient(135deg, var(--pink-soft), var(--pink-bright));
+            color: #fff;
+            border: none;
+            padding: 14px 32px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(255, 90, 121, 0.35);
+            transition: transform 0.2s;
         }
 
-        @keyframes beat {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.25); }
+        .gift-btn:active { transform: scale(0.96); }
+
+        /* Modal 禮物彈窗 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(6px);
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: #1a1a22;
+            border-radius: 24px;
+            padding: 30px 22px;
+            text-align: center;
+            width: 100%;
+            max-width: 360px;
+            border: 1.5px solid var(--pink-soft);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
         }
 
         @keyframes fadeIn {
@@ -488,7 +519,11 @@
     <!-- 1. 開場全螢幕畫面 -->
     <div id="intro-screen">
         <div class="typewriter-text" id="typewriter"></div>
-        <button class="start-btn" id="startBtn" onclick="enterSite()">開始拆禮物 🎁</button>
+        <div class="intro-choice-box" id="choiceBox">
+            <button class="choice-btn yes" onclick="handleChoice(true)">是，開啟旅程 ✨</button>
+            <button class="choice-btn" onclick="handleChoice(false)">否 🙅‍♂️</button>
+        </div>
+        <div class="warning-text" id="warningMsg"></div>
     </div>
 
     <!-- 主要內容區 -->
@@ -500,13 +535,17 @@
             <div class="envelope-icon" id="envIcon">✉️</div>
             <p id="envHint" style="font-size: 0.9rem; color: var(--pink-soft);">（點擊開啟手寫信）</p>
             <div class="letter-paper" id="letterPaper">
-佳維：
-
-其實比起浮誇的慶祝，我更想用這樣的方式，把關於我們的記憶好好收藏起來。這個網站是我一點一點敲出來的，因為有些話，平時害羞沒好好說，想在這個屬於你的日子裡，完整傳遞給你。
-
-謝謝你出現在我的生命裡，用你的溫柔與細心包容了我的一切。只要身邊有你在，我就覺得很安心。
-
 生日快樂，我最重要的你。
+
+其實我很少把這些話說得很完整，但我真的很想讓你知道，和你在一起之後，我變得很不一樣。以前的我可能比較容易不安、想很多，但你總是很有耐心地陪著我，慢慢讓我知道，原來有人可以這麼認真對待我、這麼在乎我的情緒。你會記得我隨口說過的小事，會在我想吃什麼的時候直接帶我去，會在我不開心的時候不讓我一個人撐著，總是把我哄到笑出來為止。
+
+我很喜歡跟你在一起的那些日常，不一定要去哪裡、不一定要做什麼特別的事，只要是跟你，就會變得很有意義。走路的時候你會讓我走裡面，吃東西的時候你會先顧我，很多小細節你都默默在做，這些我其實都有放在心裡，也一直很珍惜。你讓我覺得自己被保護、被照顧，也讓我很安心地做自己，甚至可以任性一點、依賴一點，因為我知道你會接住我。
+
+有時候我也會想，我是不是越來越離不開你了，但這種感覺不是壞的，而是因為你真的對我很好，好到我會開始期待未來有你在的每一天。謝謝你一直包容我、照顧我，也謝謝你讓我知道什麼叫做被愛。
+
+未來我也想變得更好，不只是被你照顧的人，而是可以陪著你、支持你的人。不管之後遇到什麼，我都希望我們可以一起面對，一起走很久很久。
+
+最後還是要再說一次，生日快樂。希望你的每一個願望都慢慢實現，而我也會一直在你身邊。
             </div>
         </div>
 
@@ -586,14 +625,15 @@
             </div>
         </div>
 
-        <!-- 5. 愛情兌換券抽獎 -->
+        <!-- 5. 愛情兌換券抽獎 (一等獎~五等獎) -->
         <div class="section-header">🎰 愛情兌換券抽獎</div>
         <div class="lottery-box">
-            <p style="font-size: 0.88rem; color: var(--text-sub); margin-bottom: 16px;">佳維專屬！點擊抽取你的今日獎勵 🎁</p>
-            <button class="lottery-btn" onclick="drawPrize()">🎲 抽一張專屬獎勵</button>
+            <p style="font-size: 0.88rem; color: var(--text-sub); margin-bottom: 16px;">佳維專屬！點擊抽取你的驚喜大獎 🎁</p>
+            <button class="lottery-btn" onclick="drawPrize()">🎲 試試手氣抽大獎</button>
             <div class="prize-result" id="prizeResult">
-                <div id="prizeText" style="font-size: 1.05rem; color: var(--pink-soft); font-weight: 700;"></div>
-                <div id="prizeCount" style="font-size: 0.78rem; color: var(--text-sub); margin-top: 6px;"></div>
+                <div id="prizeTitle" style="font-size: 1.15rem; color: #ffd700; font-weight: 700; margin-bottom: 4px;"></div>
+                <div id="prizeDesc" style="font-size: 0.9rem; color: var(--text-cream);"></div>
+                <div id="prizeCount" style="font-size: 0.78rem; color: var(--text-sub); margin-top: 8px;"></div>
             </div>
         </div>
 
@@ -608,7 +648,7 @@
             </div>
         </div>
 
-        <!-- 7. 吹蠟燭互動 -->
+        <!-- 7. 吹蠟燭 -->
         <div class="section-header">🎂 許願時間</div>
         <div class="candle-box">
             <div class="candle">
@@ -625,21 +665,35 @@
         <!-- 8. 想和你一起做的事 -->
         <div class="section-header">🌈 想和你一起做的事</div>
         <div class="todo-list">
-            <div class="todo-item" onclick="toggleCheck(this)"><div class="checkbox">✓</div> 一起去海邊看夕陽</div>
-            <div class="todo-item" onclick="toggleCheck(this)"><div class="checkbox">✓</div> 半夜突然想吃就去吃宵夜</div>
-            <div class="todo-item" onclick="toggleCheck(this)"><div class="checkbox">✓</div> 解鎖更多沒去過的城市旅行</div>
-            <div class="todo-item" onclick="toggleCheck(this)"><div class="checkbox">✓</div> 窩在家看一整天的電影</div>
-            <div class="todo-item" onclick="toggleCheck(this)"><div class="checkbox">✓</div> 一起去吃遍各式各樣美味的拉麵</div>
-            <div class="todo-item" onclick="toggleCheck(this)"><div class="checkbox">✓</div> 一直在彼此身邊</div>
+            <div class="todo-item">🌅 一起去海邊看夕陽</div>
+            <div class="todo-item">🍜 半夜突然想吃就去吃宵夜</div>
+            <div class="todo-item">✈️ 解鎖更多沒去過的城市旅行</div>
+            <div class="todo-item">🎬 窩在家看一整天的電影</div>
+            <div class="todo-item">🍜 一起去吃遍各式各樣美味的拉麵</div>
+            <div class="todo-item" style="border-color: var(--pink-soft);">💕 一直在彼此身邊</div>
         </div>
 
-        <!-- 9. 結尾 -->
+        <!-- 9. 結尾與送禮物銜接 -->
         <div class="ending-box">
             <div class="ending-title">生日快樂，佳維。</div>
-            <p style="font-size: 0.9rem; color: var(--text-sub);">謝謝你出現在我的世界 💕</p>
-            <div class="heart-beat">❤️</div>
+            <p style="font-size: 0.9rem; color: var(--text-sub); margin-bottom: 10px;">謝謝你出現在我的世界 💕</p>
+            
+            <button class="gift-btn" onclick="openGiftModal()">🎁 點擊解鎖實體生日禮物</button>
         </div>
 
+    </div>
+
+    <!-- 送禮物 Modal 彈窗 -->
+    <div class="modal" id="giftModal">
+        <div class="modal-content">
+            <div style="font-size: 3rem; margin-bottom: 10px;">🎉</div>
+            <h2 style="color: var(--pink-soft); font-size: 1.25rem; font-family: 'Noto Serif TC', serif;">生日快樂，佳維！</h2>
+            <p style="margin: 15px 0; font-size: 0.9rem; color: var(--text-sub); line-height: 1.8;">
+                這段旅程的最後，還有一份專屬於你的實體禮物喔！<br>
+                現在請向安淇領取你的生日禮物吧 🎁✨
+            </p>
+            <button onclick="closeGiftModal()" style="padding: 10px 26px; background: var(--pink-soft); color: var(--bg-dark); border: none; border-radius: 50px; cursor: pointer; font-weight: 700; margin-top: 5px;">開心收下 ❤️</button>
+        </div>
     </div>
 
     <script>
@@ -679,12 +733,13 @@
         }
         drawStars();
 
-        // --- 1. 開場打字效果 ---
+        // --- 1. 開場打字與選擇邏輯 ---
         const introTexts = ["這不是一個普通的生日網站", "是我為你準備的一段旅程..."];
         let textIndex = 0;
         let charIndex = 0;
         const typewriterEl = document.getElementById('typewriter');
-        const startBtn = document.getElementById('startBtn');
+        const choiceBox = document.getElementById('choiceBox');
+        const warningMsg = document.getElementById('warningMsg');
 
         function typeWriter() {
             if (textIndex < introTexts.length) {
@@ -703,15 +758,19 @@
                     }, 600);
                 }
             } else {
-                startBtn.classList.add('show');
+                choiceBox.classList.add('show');
             }
         }
         window.onload = typeWriter;
 
-        function enterSite() {
-            const intro = document.getElementById('intro-screen');
-            intro.style.opacity = '0';
-            setTimeout(() => intro.style.display = 'none', 1000);
+        function handleChoice(isYes) {
+            if (isYes) {
+                const intro = document.getElementById('intro-screen');
+                intro.style.opacity = '0';
+                setTimeout(() => intro.style.display = 'none', 1000);
+            } else {
+                warningMsg.innerText = "你還敢不開始啊！😤 哼，快點選「是」！";
+            }
         }
 
         // --- 2. 信封開啟 ---
@@ -728,33 +787,35 @@
             card.style.display = card.style.display === 'block' ? 'none' : 'block';
         }
 
-        // --- 5. 抽獎邏輯 (限定抽獎3次) ---
-        const prizes = [
-            "一次約會由我全包 🎡",
-            "抱抱兌換券 ×1 🤍",
-            "無條件聽你抱怨 30 分鐘 🗣️",
-            "陪你做任何你想做的事一天 ✨",
-            "任你指定一個願望 🌟",
-            "深夜宵夜點餐券 🍜"
+        // --- 5. 抽獎邏輯 (一等獎~五等獎 + 次數限制) ---
+        const tieredPrizes = [
+            { title: "🥇 一等獎", desc: "任你指定一個願望 + 一次約會由我全包！" },
+            { title: "🥈 二等獎", desc: "陪你做任何你想做的事一整天 ✨" },
+            { title: "🥉 三等獎", desc: "無條件聽你抱怨 30 分鐘 + 宵夜點餐券 🍜" },
+            { title: "🎖️ 四等獎", desc: "無條件大擁抱兌換券 ×1 🤍" },
+            { title: "🎗️ 五等獎", desc: "安淇專屬甜蜜親親兌換券 💋" }
         ];
         let drawCount = 0;
         const maxDraws = 3;
 
         function drawPrize() {
             const resultBox = document.getElementById('prizeResult');
-            const textEl = document.getElementById('prizeText');
+            const titleEl = document.getElementById('prizeTitle');
+            const descEl = document.getElementById('prizeDesc');
             const countEl = document.getElementById('prizeCount');
 
             if (drawCount >= maxDraws) {
-                textEl.innerText = "今天的抽獎機會用光囉！";
-                countEl.innerText = "要好好珍惜已經抽到的特權卡喔 💕";
+                titleEl.innerText = "🔒 抽獎機會已用完";
+                descEl.innerText = "要把機會留在最棒的時刻，好好珍惜抽到的特權卡喔 💕";
+                countEl.innerText = "";
                 resultBox.style.display = 'block';
                 return;
             }
 
             drawCount++;
-            const randomPrize = prizes[Math.floor(Math.random() * prizes.length)];
-            textEl.innerText = randomPrize;
+            const randomPrize = tieredPrizes[Math.floor(Math.random() * tieredPrizes.length)];
+            titleEl.innerText = randomPrize.title;
+            descEl.innerText = randomPrize.desc;
             countEl.innerText = `剩餘抽獎次數：${maxDraws - drawCount} 次`;
             resultBox.style.display = 'block';
 
@@ -776,12 +837,14 @@
             confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
         }
 
-        // --- 8. 清單 Checkbox ---
-        function toggleCheck(element) {
-            element.classList.toggle('checked');
-            if (element.classList.contains('checked')) {
-                confetti({ particleCount: 15, spread: 30, origin: { y: 0.8 } });
-            }
+        // --- 9. 實體禮物彈窗控制 ---
+        function openGiftModal() {
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+            document.getElementById('giftModal').style.display = 'flex';
+        }
+
+        function closeGiftModal() {
+            document.getElementById('giftModal').style.display = 'none';
         }
     </script>
 </body>
