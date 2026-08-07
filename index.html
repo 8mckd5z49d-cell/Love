@@ -55,6 +55,32 @@
             padding: 24px 20px 80px;
         }
 
+        /* 🎵 背景音樂播放器按鈕 */
+        .music-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 141, 161, 0.2);
+            border: 1px solid var(--pink-soft);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s;
+        }
+        .music-btn.playing {
+            animation: rotate 4s linear infinite;
+            background: var(--pink-soft);
+            color: var(--bg-dark);
+        }
+        @keyframes rotate { 100% { transform: rotate(360deg); } }
+
         /* 1. 開場全螢幕畫面 */
         #intro-screen {
             position: fixed;
@@ -148,6 +174,41 @@
             background: linear-gradient(90deg, var(--card-border), transparent);
         }
 
+        /* ⏳ 愛情計時器卡片 */
+        .timer-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-card);
+            padding: 20px;
+            text-align: center;
+            backdrop-filter: blur(8px);
+        }
+
+        .timer-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .timer-unit {
+            background: rgba(255, 141, 161, 0.08);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 10px 4px;
+        }
+
+        .timer-num {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--pink-soft);
+        }
+
+        .timer-label {
+            font-size: 0.72rem;
+            color: var(--text-sub);
+        }
+
         /* 2. 信封卡片 */
         .envelope-wrapper {
             background: var(--card-bg);
@@ -226,6 +287,44 @@
             margin-top: 8px;
             line-height: 1.8;
             backdrop-filter: blur(5px);
+        }
+
+        /* 🗺️ 足跡地圖卡片 */
+        .footprint-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .footprint-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 16px;
+            backdrop-filter: blur(5px);
+        }
+
+        .footprint-tag {
+            font-size: 0.75rem;
+            color: var(--pink-soft);
+            border: 1px solid var(--pink-soft);
+            border-radius: 20px;
+            padding: 2px 8px;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+
+        .footprint-name {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-cream);
+            margin-bottom: 4px;
+        }
+
+        .footprint-desc {
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            line-height: 1.5;
         }
 
         /* 4. 翻牌卡片 (10個理由) */
@@ -441,10 +540,38 @@
             color: var(--text-cream);
         }
 
+        /* 💬 悄悄話留言框 */
+        .reply-box {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-card);
+            padding: 22px;
+            margin-top: 35px;
+            text-align: center;
+        }
+
+        .reply-input {
+            width: 100%;
+            height: 85px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 12px;
+            color: var(--text-cream);
+            font-size: 0.9rem;
+            margin: 12px 0;
+            resize: none;
+            outline: none;
+        }
+
+        .reply-input:focus {
+            border-color: var(--pink-soft);
+        }
+
         /* 9. 結尾與送禮物 */
         .ending-box {
             text-align: center;
-            margin-top: 50px;
+            margin-top: 40px;
             padding: 30px 20px;
             background: var(--card-bg);
             border: 1px solid var(--card-border);
@@ -516,6 +643,11 @@
     <!-- 星空背景 Canvas -->
     <canvas id="starfield"></canvas>
 
+    <!-- 🎵 音樂播放按鈕 -->
+    <div class="music-btn" id="musicBtn" onclick="toggleMusic()">🎵</div>
+    <!-- ⬇️ 背景音樂 mp3 網址 ⬇️ -->
+    <audio id="bgm" loop src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3"></audio>
+
     <!-- 1. 開場全螢幕畫面 -->
     <div id="intro-screen">
         <div class="typewriter-text" id="typewriter"></div>
@@ -528,6 +660,17 @@
 
     <!-- 主要內容區 -->
     <div class="container">
+
+        <!-- ⏳ 我們在一起的時光計時器 -->
+        <div class="timer-card">
+            <p style="font-size: 0.85rem; color: var(--text-sub);">佳維，我們已經在一起：</p>
+            <div class="timer-grid">
+                <div class="timer-unit"><div class="timer-num" id="days">0</div><div class="timer-label">天</div></div>
+                <div class="timer-unit"><div class="timer-num" id="hours">0</div><div class="timer-label">小時</div></div>
+                <div class="timer-unit"><div class="timer-num" id="minutes">0</div><div class="timer-label">分</div></div>
+                <div class="timer-unit"><div class="timer-num" id="seconds">0</div><div class="timer-label">秒</div></div>
+            </div>
+        </div>
 
         <!-- 2. 給佳維的信封 -->
         <div class="section-header">💌 給佳維的一封信</div>
@@ -586,6 +729,32 @@
                     <span style="font-size: 0.8rem; color: var(--text-sub);">＋</span>
                 </div>
                 <div class="timeline-card">是每一次走路時你默默把我推到內側、是幫我吃光剩飯的貼心，也是不論如何都耐心把我哄笑的瞬間。</div>
+            </div>
+        </div>
+
+        <!-- 🗺️ 我們的紀念足跡 -->
+        <div class="section-header">🗺️ 我們的足跡與回憶</div>
+        <div class="footprint-grid">
+            <!-- ⬇️ 【修改地點與文字】 ⬇️ -->
+            <div class="footprint-card">
+                <span class="footprint-tag">📍 約會首站</span>
+                <div class="footprint-name">【地點：請填寫電影院】</div>
+                <div class="footprint-desc">初次遇見你的地方，雨傘「小黃」的故事就在這。</div>
+            </div>
+            <div class="footprint-card">
+                <span class="footprint-tag">🍜 美食記憶</span>
+                <div class="footprint-name">【地點：請填寫拉麵店】</div>
+                <div class="footprint-desc">告白那天吃的美味拉麵，充滿我們的回憶。</div>
+            </div>
+            <div class="footprint-card">
+                <span class="footprint-tag">🌅 浪漫散步</span>
+                <div class="footprint-name">【地點：請填公園或海邊】</div>
+                <div class="footprint-desc">走在你內側，手被你牽得很緊的那一天。</div>
+            </div>
+            <div class="footprint-card">
+                <span class="footprint-tag">🏠 私房基地</span>
+                <div class="footprint-name">【地點：請填溫馨小場所】</div>
+                <div class="footprint-desc">窩在一起看電影、聊天說話的最安心城堡。</div>
             </div>
         </div>
 
@@ -662,7 +831,7 @@
             </div>
         </div>
 
-        <!-- 8. 想和你一起做的事 -->
+        <!-- 8. 想和你一起做的事 List -->
         <div class="section-header">🌈 想和你一起做的事</div>
         <div class="todo-list">
             <div class="todo-item">🌅 一起去海邊看夕陽</div>
@@ -673,7 +842,15 @@
             <div class="todo-item" style="border-color: var(--pink-soft);">💕 一直在彼此身邊</div>
         </div>
 
-        <!-- 9. 結尾與送禮物銜接 -->
+        <!-- 💬 悄悄話留言互動區 -->
+        <div class="reply-box">
+            <p style="font-size: 0.9rem; color: var(--pink-soft); font-weight: 700;">💬 看完這封情書，想對安淇說什麼嗎？</p>
+            <textarea class="reply-input" id="replyText" placeholder="寫下你想對安淇說的話..."></textarea>
+            <button class="choice-btn yes" onclick="sendReply()">送出悄悄話 ❤️</button>
+            <p id="replyStatus" style="font-size: 0.8rem; color: var(--pink-bright); margin-top: 8px; display: none;"></p>
+        </div>
+
+        <!-- 9. 結尾與送禮物 -->
         <div class="ending-box">
             <div class="ending-title">生日快樂，佳維。</div>
             <p style="font-size: 0.9rem; color: var(--text-sub); margin-bottom: 10px;">謝謝你出現在我的世界 💕</p>
@@ -697,6 +874,39 @@
     </div>
 
     <script>
+        // --- ⏳ 在一起的時間計時器 (預設從 2025/06/14 開始計算) ---
+        const startDate = new Date('2025-06-14T00:00:00');
+
+        function updateTimer() {
+            const now = new Date();
+            const diff = now - startDate;
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / 1000 / 60) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+
+            document.getElementById('days').innerText = days;
+            document.getElementById('hours').innerText = hours;
+            document.getElementById('minutes').innerText = minutes;
+            document.getElementById('seconds').innerText = seconds;
+        }
+        setInterval(updateTimer, 1000);
+        updateTimer();
+
+        // --- 🎵 音樂播放器控制 ---
+        function toggleMusic() {
+            const bgm = document.getElementById('bgm');
+            const btn = document.getElementById('musicBtn');
+            if (bgm.paused) {
+                bgm.play();
+                btn.classList.add('playing');
+            } else {
+                bgm.pause();
+                btn.classList.remove('playing');
+            }
+        }
+
         // --- 背景星空動畫 ---
         const canvas = document.getElementById('starfield');
         const ctx = canvas.getContext('2d');
@@ -768,6 +978,10 @@
                 const intro = document.getElementById('intro-screen');
                 intro.style.opacity = '0';
                 setTimeout(() => intro.style.display = 'none', 1000);
+                // 點擊「是」後同步嘗試播放背景音樂
+                document.getElementById('bgm').play().then(() => {
+                    document.getElementById('musicBtn').classList.add('playing');
+                }).catch(() => {});
             } else {
                 warningMsg.innerText = "你還敢不開始啊！😤 哼，快點選「是」！";
             }
@@ -835,6 +1049,20 @@
             document.getElementById('candleHint').style.display = 'none';
             document.getElementById('wishText').classList.add('show');
             confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
+        }
+
+        // --- 💬 送出悄悄話邏輯 ---
+        function sendReply() {
+            const input = document.getElementById('replyText');
+            const status = document.getElementById('replyStatus');
+            if(input.value.trim() === "") {
+                status.innerText = "記得寫一點話再送出喔！";
+                status.style.display = 'block';
+                return;
+            }
+            status.innerText = "安淇已經收到了！請當面親她一下解鎖回覆 💕";
+            status.style.display = 'block';
+            confetti({ particleCount: 60, spread: 60, origin: { y: 0.8 } });
         }
 
         // --- 9. 實體禮物彈窗控制 ---
