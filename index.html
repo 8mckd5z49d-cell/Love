@@ -36,6 +36,7 @@
             margin: 0;
             overflow-x: hidden;
             min-height: 100vh;
+            position: relative;
         }
 
         /* 背景星空 Canvas */
@@ -49,10 +50,37 @@
             pointer-events: none;
         }
 
+        /* 飄落愛心容器 */
+        .hearts-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .heart-particle {
+            position: absolute;
+            color: var(--pink-soft);
+            opacity: 0.6;
+            animation: floatDown linear infinite;
+        }
+
+        @keyframes floatDown {
+            0% { transform: translateY(-10vh) rotate(0deg) scale(0.8); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(105vh) rotate(360deg) scale(1.2); opacity: 0; }
+        }
+
         .container {
             max-width: 480px;
             margin: 0 auto;
             padding: 24px 20px 80px;
+            position: relative;
+            z-index: 1;
         }
 
         /* 🎵 背景音樂播放器按鈕 */
@@ -60,24 +88,26 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            width: 44px;
-            height: 44px;
-            background: rgba(255, 141, 161, 0.2);
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 141, 161, 0.25);
             border: 1px solid var(--pink-soft);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             cursor: pointer;
             z-index: 1000;
             backdrop-filter: blur(5px);
             transition: all 0.3s;
+            box-shadow: 0 0 15px rgba(255, 141, 161, 0.3);
         }
         .music-btn.playing {
             animation: rotate 4s linear infinite;
             background: var(--pink-soft);
             color: var(--bg-dark);
+            box-shadow: 0 0 20px var(--pink-soft);
         }
         @keyframes rotate { 100% { transform: rotate(360deg); } }
 
@@ -146,7 +176,6 @@
             transform: scale(0.95);
         }
 
-        /* 警告小提示 */
         .warning-text {
             color: var(--pink-bright);
             font-size: 0.9rem;
@@ -182,6 +211,13 @@
             padding: 20px;
             text-align: center;
             backdrop-filter: blur(8px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            animation: pulseGlow 3s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 10px rgba(255, 141, 161, 0.1); }
+            100% { box-shadow: 0 0 20px rgba(255, 141, 161, 0.3); }
         }
 
         .timer-grid {
@@ -209,7 +245,7 @@
             color: var(--text-sub);
         }
 
-        /* 2. 信封卡片 */
+        /* 信封卡片 */
         .envelope-wrapper {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
@@ -221,11 +257,22 @@
             backdrop-filter: blur(8px);
         }
 
+        .envelope-wrapper:hover {
+            transform: translateY(-3px);
+            border-color: var(--pink-soft);
+        }
+
         .envelope-icon {
             font-size: 3rem;
             margin-bottom: 10px;
             display: inline-block;
             transition: transform 0.5s ease;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
         }
 
         .letter-paper {
@@ -287,6 +334,76 @@
             margin-top: 8px;
             line-height: 1.8;
             backdrop-filter: blur(5px);
+            animation: slideDown 0.4s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 🧩 愛情小測驗 Quiz */
+        .quiz-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-card);
+            padding: 20px;
+            backdrop-filter: blur(8px);
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+
+        .quiz-card:hover {
+            border-color: var(--pink-soft);
+        }
+
+        .quiz-question {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-cream);
+            margin-bottom: 12px;
+        }
+
+        .quiz-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .quiz-option-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            color: var(--text-cream);
+            padding: 10px;
+            border-radius: 12px;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quiz-option-btn:hover {
+            background: rgba(255, 141, 161, 0.15);
+            border-color: var(--pink-soft);
+        }
+
+        .quiz-option-btn.correct {
+            background: rgba(46, 204, 113, 0.2) !important;
+            border-color: #2ecc71 !important;
+            color: #2ecc71 !important;
+            font-weight: 700;
+        }
+
+        .quiz-option-btn.wrong {
+            background: rgba(231, 76, 60, 0.2) !important;
+            border-color: #e74c3c !important;
+            color: #e74c3c !important;
+        }
+
+        .quiz-feedback {
+            font-size: 0.8rem;
+            margin-top: 8px;
+            min-height: 20px;
+            font-weight: 600;
         }
 
         /* 🗺️ 足跡地圖卡片 */
@@ -302,6 +419,12 @@
             border-radius: 16px;
             padding: 16px;
             backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+
+        .footprint-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 5px 15px rgba(255, 141, 161, 0.2);
         }
 
         .footprint-tag {
@@ -446,6 +569,12 @@
             font-size: 0.9rem;
             cursor: pointer;
             margin-top: 12px;
+            transition: all 0.3s;
+        }
+
+        .reveal-btn:hover {
+            background: rgba(255, 215, 0, 0.2);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
         }
 
         .award-result {
@@ -538,6 +667,11 @@
             gap: 12px;
             font-size: 0.92rem;
             color: var(--text-cream);
+            transition: transform 0.2s;
+        }
+
+        .todo-item:hover {
+            transform: translateX(5px);
         }
 
         /* 💬 悄悄話留言框 */
@@ -643,10 +777,13 @@
     <!-- 星空背景 Canvas -->
     <canvas id="starfield"></canvas>
 
-    <!-- 🎵 音樂播放按鈕 -->
+    <!-- 愛心飄落動畫容器 -->
+    <div class="hearts-container" id="heartsContainer"></div>
+
+    <!-- 🎵 背景音樂播放按鈕 -->
     <div class="music-btn" id="musicBtn" onclick="toggleMusic()">🎵</div>
-    <!-- ⬇️ 背景音樂 mp3 網址 ⬇️ -->
-    <audio id="bgm" loop src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3"></audio>
+    <!-- 背景音樂：專屬天使 (鋼琴感動版) -->
+    <audio id="bgm" loop src="https://cdn.pixabay.com/download/audio/2022/11/06/audio_031f79f9be.mp3"></audio>
 
     <!-- 1. 開場全螢幕畫面 -->
     <div id="intro-screen">
@@ -732,29 +869,81 @@
             </div>
         </div>
 
-        <!-- 🗺️ 我們的紀念足跡 -->
+        <!-- 🧩 新增：愛情小測驗 -->
+        <div class="section-header">🧩 考考佳維：安淇了解度大測試</div>
+        <p style="font-size: 0.8rem; color: var(--text-sub); margin-bottom: 14px; text-align: center;">看你對安淇有多了解！答對有驚喜喔 ✨</p>
+        
+        <!-- 題目 1 -->
+        <div class="quiz-card">
+            <div class="quiz-question">1. 安淇最喜歡吃什麼？</div>
+            <div class="quiz-options">
+                <button class="quiz-option-btn" onclick="checkQuiz(this, true, 1)">蛋糕</button>
+                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 1)">漢頓</button>
+                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 1)">佳維</button>
+                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 1)">抱抱+親親</button>
+            </div>
+            <div class="quiz-feedback" id="quiz-feedback-1"></div>
+        </div>
+
+        <!-- 題目 2 -->
+        <div class="quiz-card">
+            <div class="quiz-question">2. 安淇喜歡的東西是什麼？</div>
+            <div class="quiz-options">
+                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 2)">蛋糕</button>
+                <button class="quiz-option-btn" onclick="checkQuiz(this, true, 2)">漢頓</button>
+                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 2)">佳維</button>
+                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 2)">抱抱+親親</button>
+            </div>
+            <div class="quiz-feedback" id="quiz-feedback-2"></div>
+        </div>
+
+        <!-- 題目 3 -->
+        <div class="quiz-card">
+            <div class="quiz-question">3. 安淇最喜歡的人是誰？</div>
+            <div class="quiz-options">
+                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 3)">蛋糕</button>
+                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 3)">漢頓</button>
+                <button class="quiz-option-btn" onclick="checkQuiz(this, true, 3)">佳維</button>
+                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 3)">抱抱+親親</button>
+            </div>
+            <div class="quiz-feedback" id="quiz-feedback-3"></div>
+        </div>
+
+        <!-- 題目 4 -->
+        <div class="quiz-card">
+            <div class="quiz-question">4. 安淇不開心要怎麼哄？</div>
+            <div class="quiz-options">
+                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 4)">蛋糕</button>
+                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 4)">漢頓</button>
+                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 4)">佳維</button>
+                <button class="quiz-option-btn" onclick="checkQuiz(this, true, 4)">抱抱+親親</button>
+            </div>
+            <div class="quiz-feedback" id="quiz-feedback-4"></div>
+        </div>
+
+
+        <!-- 🗺️ 我們的紀念足跡 (無預留文字，已更新) -->
         <div class="section-header">🗺️ 我們的足跡與回憶</div>
         <div class="footprint-grid">
-            <!-- ⬇️ 【修改地點與文字】 ⬇️ -->
             <div class="footprint-card">
-                <span class="footprint-tag">📍 約會首站</span>
-                <div class="footprint-name">【地點：請填寫電影院】</div>
-                <div class="footprint-desc">初次遇見你的地方，雨傘「小黃」的故事就在這。</div>
+                <span class="footprint-tag">📍 第一個市集</span>
+                <div class="footprint-name">馬祖新村</div>
+                <div class="footprint-desc">一起逛的第一個市集，牽著手感受文青與慢活的小美好。</div>
             </div>
             <div class="footprint-card">
-                <span class="footprint-tag">🍜 美食記憶</span>
-                <div class="footprint-name">【地點：請填寫拉麵店】</div>
-                <div class="footprint-desc">告白那天吃的美味拉麵，充滿我們的回憶。</div>
+                <span class="footprint-tag">🍛 第一餐</span>
+                <div class="footprint-name">CoCo壹番屋</div>
+                <div class="footprint-desc">我們第一次一起吃飯的地方，開啟了兩個人的美食地圖。</div>
             </div>
             <div class="footprint-card">
-                <span class="footprint-tag">🌅 浪漫散步</span>
-                <div class="footprint-name">【地點：請填公園或海邊】</div>
-                <div class="footprint-desc">走在你內側，手被你牽得很緊的那一天。</div>
+                <span class="footprint-tag">🌅 第一個生日</span>
+                <div class="footprint-name">淡水</div>
+                <div class="footprint-desc">和你一起過的你的第一個生日，伴著夕陽與海風的浪漫。</div>
             </div>
             <div class="footprint-card">
-                <span class="footprint-tag">🏠 私房基地</span>
-                <div class="footprint-name">【地點：請填溫馨小場所】</div>
-                <div class="footprint-desc">窩在一起看電影、聊天說話的最安心城堡。</div>
+                <span class="footprint-tag">🍪 第一塊餅乾</span>
+                <div class="footprint-name">自己做烘焙聚</div>
+                <div class="footprint-desc">第一次一起做餅乾，甜甜的手作過程就像我們的回憶。</div>
             </div>
         </div>
 
@@ -794,7 +983,7 @@
             </div>
         </div>
 
-        <!-- 5. 愛情兌換券抽獎 (一等獎~五等獎) -->
+        <!-- 5. 愛情兌換券抽獎 -->
         <div class="section-header">🎰 愛情兌換券抽獎</div>
         <div class="lottery-box">
             <p style="font-size: 0.88rem; color: var(--text-sub); margin-bottom: 16px;">佳維專屬！點擊抽取你的驚喜大獎 🎁</p>
@@ -874,7 +1063,7 @@
     </div>
 
     <script>
-        // --- ⏳ 在一起的時間計時器 (預設從 2025/06/14 開始計算) ---
+        // --- ⏳ 在一起的時間計時器 ---
         const startDate = new Date('2025-06-14T00:00:00');
 
         function updateTimer() {
@@ -907,7 +1096,7 @@
             }
         }
 
-        // --- 背景星空動畫 ---
+        // --- 背景星空動畫（加強版） ---
         const canvas = document.getElementById('starfield');
         const ctx = canvas.getContext('2d');
         let stars = [];
@@ -919,13 +1108,13 @@
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
-        for (let i = 0; i < 70; i++) {
+        for (let i = 0; i < 100; i++) {
             stars.push({
                 x: Math.random() * canvas.width,
                 y: Math.random() * canvas.height,
-                size: Math.random() * 1.5,
+                size: Math.random() * 2,
                 alpha: Math.random(),
-                speed: Math.random() * 0.01 + 0.005
+                speed: Math.random() * 0.015 + 0.005
             });
         }
 
@@ -942,6 +1131,21 @@
             requestAnimationFrame(drawStars);
         }
         drawStars();
+
+        // --- 💕 飄落愛心動畫特效 ---
+        function createHeartParticle() {
+            const container = document.getElementById('heartsContainer');
+            const heart = document.createElement('div');
+            heart.classList.add('heart-particle');
+            heart.innerHTML = ['♥', '💖', '✨', '🌸'][Math.floor(Math.random() * 4)];
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = (Math.random() * 12 + 10) + 'px';
+            heart.style.animationDuration = (Math.random() * 4 + 4) + 's';
+            
+            container.appendChild(heart);
+            setTimeout(() => { heart.remove(); }, 8000);
+        }
+        setInterval(createHeartParticle, 600);
 
         // --- 1. 開場打字與選擇邏輯 ---
         const introTexts = ["這不是一個普通的生日網站", "是我為你準備的一段旅程..."];
@@ -978,7 +1182,6 @@
                 const intro = document.getElementById('intro-screen');
                 intro.style.opacity = '0';
                 setTimeout(() => intro.style.display = 'none', 1000);
-                // 點擊「是」後同步嘗試播放背景音樂
                 document.getElementById('bgm').play().then(() => {
                     document.getElementById('musicBtn').classList.add('playing');
                 }).catch(() => {});
@@ -992,6 +1195,7 @@
             document.getElementById('envIcon').style.transform = 'scale(1.2) rotate(-10deg)';
             document.getElementById('envHint').style.display = 'none';
             document.getElementById('letterPaper').style.display = 'block';
+            confetti({ particleCount: 40, spread: 50, origin: { y: 0.5 } });
         }
 
         // --- 3. 時間軸展開 ---
@@ -1001,7 +1205,31 @@
             card.style.display = card.style.display === 'block' ? 'none' : 'block';
         }
 
-        // --- 5. 抽獎邏輯 (一等獎~五等獎 + 次數限制) ---
+        // --- 🧩 愛情小測驗判斷 ---
+        function checkQuiz(btn, isCorrect, qNum) {
+            const parent = btn.parentElement;
+            const buttons = parent.querySelectorAll('.quiz-option-btn');
+            const feedback = document.getElementById(`quiz-feedback-${qNum}`);
+
+            buttons.forEach(b => b.disabled = true);
+
+            if(isCorrect) {
+                btn.classList.add('correct');
+                feedback.innerHTML = "🎉 答對了！佳維真的很了解安淇！";
+                feedback.style.color = "#2ecc71";
+                confetti({ particleCount: 30, spread: 60, origin: { y: 0.7 } });
+            } else {
+                btn.classList.add('wrong');
+                feedback.innerHTML = "哼哼！答錯了喔～快再想想！😏";
+                feedback.style.color = "#e74c3c";
+                setTimeout(() => {
+                    buttons.forEach(b => b.disabled = false);
+                    btn.classList.remove('wrong');
+                }, 1500);
+            }
+        }
+
+        // --- 5. 抽獎邏輯 ---
         const tieredPrizes = [
             { title: "🥇 一等獎", desc: "任你指定一個願望 + 一次約會由我全包！" },
             { title: "🥈 二等獎", desc: "陪你做任何你想做的事一整天 ✨" },
@@ -1033,14 +1261,14 @@
             countEl.innerText = `剩餘抽獎次數：${maxDraws - drawCount} 次`;
             resultBox.style.display = 'block';
 
-            confetti({ particleCount: 35, spread: 50, origin: { y: 0.7 } });
+            confetti({ particleCount: 40, spread: 60, origin: { y: 0.7 } });
         }
 
         // --- 6. 頒獎典禮 ---
         function revealAward() {
             document.getElementById('revealBtn').style.display = 'none';
             document.getElementById('awardResult').style.display = 'block';
-            confetti({ particleCount: 80, spread: 70, origin: { y: 0.65 } });
+            confetti({ particleCount: 90, spread: 80, origin: { y: 0.65 } });
         }
 
         // --- 7. 吹蠟燭 ---
@@ -1048,7 +1276,7 @@
             document.getElementById('flame').classList.add('off');
             document.getElementById('candleHint').style.display = 'none';
             document.getElementById('wishText').classList.add('show');
-            confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
+            confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
         }
 
         // --- 💬 送出悄悄話邏輯 ---
@@ -1067,7 +1295,7 @@
 
         // --- 9. 實體禮物彈窗控制 ---
         function openGiftModal() {
-            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+            confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
             document.getElementById('giftModal').style.display = 'flex';
         }
 
