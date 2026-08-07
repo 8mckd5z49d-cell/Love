@@ -782,8 +782,8 @@
 
     <!-- 🎵 背景音樂播放按鈕 -->
     <div class="music-btn" id="musicBtn" onclick="toggleMusic()">🎵</div>
-    <!-- 背景音樂：專屬天使 (鋼琴感動版) -->
-    <audio id="bgm" loop src="https://cdn.pixabay.com/download/audio/2022/11/06/audio_031f79f9be.mp3"></audio>
+    <!-- 背景音樂：Everytime We Touch (溫柔鋼琴版 Piano Cover) -->
+    <audio id="bgm" loop src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3"></audio>
 
     <!-- 1. 開場全螢幕畫面 -->
     <div id="intro-screen">
@@ -869,7 +869,7 @@
             </div>
         </div>
 
-        <!-- 🧩 新增：愛情小測驗 -->
+        <!-- 🧩 愛情小測驗 (選項已補齊混淆答案) -->
         <div class="section-header">🧩 考考佳維：安淇了解度大測試</div>
         <p style="font-size: 0.8rem; color: var(--text-sub); margin-bottom: 14px; text-align: center;">看你對安淇有多了解！答對有驚喜喔 ✨</p>
         
@@ -877,10 +877,10 @@
         <div class="quiz-card">
             <div class="quiz-question">1. 安淇最喜歡吃什麼？</div>
             <div class="quiz-options">
-                <button class="quiz-option-btn" onclick="checkQuiz(this, true, 1)">蛋糕</button>
-                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 1)">漢頓</button>
-                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 1)">佳維</button>
-                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 1)">抱抱+親親</button>
+                <button class="quiz-option-btn" onclick="checkQuiz(this, true, 1)">蛋糕 🍰</button>
+                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 1)">拉麵 🍜</button>
+                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 1)">地瓜球 🍠</button>
+                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 1)">舒芙蕾 🥞</button>
             </div>
             <div class="quiz-feedback" id="quiz-feedback-1"></div>
         </div>
@@ -889,10 +889,10 @@
         <div class="quiz-card">
             <div class="quiz-question">2. 安淇喜歡的東西是什麼？</div>
             <div class="quiz-options">
-                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 2)">蛋糕</button>
-                <button class="quiz-option-btn" onclick="checkQuiz(this, true, 2)">漢頓</button>
-                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 2)">佳維</button>
-                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 2)">抱抱+親親</button>
+                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 2)">吉伊卡哇 🐱</button>
+                <button class="quiz-option-btn" onclick="checkQuiz(this, true, 2)">人魚漢頓 🐟</button>
+                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 2)">庫洛米 😈</button>
+                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 2)">大耳狗 🐶</button>
             </div>
             <div class="quiz-feedback" id="quiz-feedback-2"></div>
         </div>
@@ -901,10 +901,10 @@
         <div class="quiz-card">
             <div class="quiz-question">3. 安淇最喜歡的人是誰？</div>
             <div class="quiz-options">
-                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 3)">蛋糕</button>
-                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 3)">漢頓</button>
-                <button class="quiz-option-btn" onclick="checkQuiz(this, true, 3)">佳維</button>
-                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 3)">抱抱+親親</button>
+                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 3)">金秀賢 ✨</button>
+                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 3)">許光漢 💫</button>
+                <button class="quiz-option-btn" onclick="checkQuiz(this, true, 3)">佳維 ♥️</button>
+                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 3)">車銀優 ✨</button>
             </div>
             <div class="quiz-feedback" id="quiz-feedback-3"></div>
         </div>
@@ -913,16 +913,16 @@
         <div class="quiz-card">
             <div class="quiz-question">4. 安淇不開心要怎麼哄？</div>
             <div class="quiz-options">
-                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 4)">蛋糕</button>
-                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 4)">漢頓</button>
-                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 4)">佳維</button>
-                <button class="quiz-option-btn" onclick="checkQuiz(this, true, 4)">抱抱+親親</button>
+                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 4)">罰站三小時 🧍‍♂️</button>
+                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 4)">講冷笑話 🥶</button>
+                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 4)">假裝沒看到 🙈</button>
+                <button class="quiz-option-btn" onclick="checkQuiz(this, true, 4)">抱抱+親親 💋</button>
             </div>
             <div class="quiz-feedback" id="quiz-feedback-4"></div>
         </div>
 
 
-        <!-- 🗺️ 我們的紀念足跡 (無預留文字，已更新) -->
+        <!-- 🗺️ 我們的紀念足跡 -->
         <div class="section-header">🗺️ 我們的足跡與回憶</div>
         <div class="footprint-grid">
             <div class="footprint-card">
@@ -1096,7 +1096,7 @@
             }
         }
 
-        // --- 背景星空動畫（加強版） ---
+        // --- 背景星空動畫 ---
         const canvas = document.getElementById('starfield');
         const ctx = canvas.getContext('2d');
         let stars = [];
