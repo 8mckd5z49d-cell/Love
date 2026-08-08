@@ -184,11 +184,25 @@
             font-weight: 700;
         }
 
+        /* 各環節專屬開場引言 */
+        .section-intro {
+            font-size: 0.88rem;
+            color: #d1c7bd;
+            font-family: 'Noto Serif TC', serif;
+            font-style: italic;
+            margin-top: 40px;
+            margin-bottom: 8px;
+            line-height: 1.7;
+            padding-left: 12px;
+            border-left: 2.5px solid var(--pink-soft);
+            letter-spacing: 0.5px;
+        }
+
         /* 區塊標題 */
         .section-header {
             font-size: 1.2rem;
             color: var(--pink-soft);
-            margin: 45px 0 20px;
+            margin: 8px 0 20px;
             letter-spacing: 1.5px;
             display: flex;
             align-items: center;
@@ -680,7 +694,7 @@
             border: 1px solid var(--card-border);
             border-radius: var(--radius-card);
             padding: 22px;
-            margin-top: 35px;
+            margin-top: 15px;
             text-align: center;
         }
 
@@ -705,7 +719,7 @@
         /* 9. 結尾與送禮物 */
         .ending-box {
             text-align: center;
-            margin-top: 40px;
+            margin-top: 15px;
             padding: 30px 20px;
             background: var(--card-bg);
             border: 1px solid var(--card-border);
@@ -798,7 +812,8 @@
     <!-- 主要內容區 -->
     <div class="container">
 
-        <!-- ⏳ 我們在一起的時光計時器 -->
+        <!-- 環節 0 開場引言 + ⏳ 愛情計時器卡片 -->
+        <div class="section-intro">「故事的開端，是時間幫我們記下的每一秒...」</div>
         <div class="timer-card">
             <p style="font-size: 0.85rem; color: var(--text-sub);">佳維，我們已經在一起：</p>
             <div class="timer-grid">
@@ -809,7 +824,8 @@
             </div>
         </div>
 
-        <!-- 2. 給佳維的信封 -->
+        <!-- 環節 1 開場引言 + 2. 給佳維的信封 -->
+        <div class="section-intro">「平常有些害羞不敢當面說的話，我都偷偷藏在這封信裡了...」</div>
         <div class="section-header">💌 給佳維的一封信</div>
         <div class="envelope-wrapper" onclick="openEnvelope()">
             <div class="envelope-icon" id="envIcon">✉️</div>
@@ -829,7 +845,8 @@
             </div>
         </div>
 
-        <!-- 3. 我們的故事時間軸 -->
+        <!-- 環節 2 開場引言 + 3. 我們的故事時間軸 -->
+        <div class="section-intro">「沿著記憶的光景往回看，每一個瞬間都閃閃發亮...」</div>
         <div class="section-header">📖 我們的回憶碎片</div>
         <div class="timeline">
             <div class="timeline-item">
@@ -869,7 +886,8 @@
             </div>
         </div>
 
-        <!-- 🧩 愛情小測驗 (選項已補齊混淆答案) -->
+        <!-- 環節 3 開場引言 + 🧩 愛情小測驗 -->
+        <div class="section-intro">「接下來是隨堂測驗！考考你到底有沒有把安淇的話放在心上～」</div>
         <div class="section-header">🧩 考考佳維：安淇了解度大測試</div>
         <p style="font-size: 0.8rem; color: var(--text-sub); margin-bottom: 14px; text-align: center;">看你對安淇有多了解！答對有驚喜喔 ✨</p>
         
@@ -922,7 +940,8 @@
         </div>
 
 
-        <!-- 🗺️ 我們的紀念足跡 -->
+        <!-- 環節 4 開場引言 + 🗺️ 我們的紀念足跡 -->
+        <div class="section-intro">「每一個景點、每一頓飯，因為有你在身邊，都成了我最愛的風景...」</div>
         <div class="section-header">🗺️ 我們的足跡與回憶</div>
         <div class="footprint-grid">
             <div class="footprint-card">
@@ -947,7 +966,8 @@
             </div>
         </div>
 
-        <!-- 4. 喜歡你的10個理由 -->
+        <!-- 環節 5 開場引言 + 4. 喜歡你的10個理由 -->
+        <div class="section-intro">「如果問我為什麼喜歡你，這 10 個秘密卡片就是我的答案...」</div>
         <div class="section-header">💖 喜歡你的 10 個理由</div>
         <p style="font-size: 0.8rem; color: var(--text-sub); margin-bottom: 14px; text-align: center;">✨ 點擊卡片翻開秘密 ✨</p>
         <div class="reasons-grid">
@@ -983,7 +1003,8 @@
             </div>
         </div>
 
-        <!-- 5. 愛情兌換券抽獎 -->
+        <!-- 環節 6 開場引言 + 5. 愛情兌換券抽獎 -->
+        <div class="section-intro">「壽星限定福利時間！試試手氣，抽張專屬的男友特權吧～」</div>
         <div class="section-header">🎰 愛情兌換券抽獎</div>
         <div class="lottery-box">
             <p style="font-size: 0.88rem; color: var(--text-sub); margin-bottom: 16px;">佳維專屬！點擊抽取你的驚喜大獎 🎁</p>
@@ -995,7 +1016,8 @@
             </div>
         </div>
 
-        <!-- 6. 最佳男友頒獎典禮 -->
+        <!-- 環節 7 開場引言 + 6. 最佳男友頒獎典禮 -->
+        <div class="section-intro">「經過安淇全方位的嚴格評選，今年度的得獎者已經誕生了...」</div>
         <div class="section-header">🏆 頒獎典禮</div>
         <div class="award-box">
             <p style="font-size: 0.92rem; color: var(--text-cream);">榮獲本年度最佳男友的是——</p>
@@ -1006,7 +1028,8 @@
             </div>
         </div>
 
-        <!-- 7. 吹蠟燭 -->
+        <!-- 環節 8 開場引言 + 7. 吹蠟燭 -->
+        <div class="section-intro">「閉上眼睛，好好許個願吧，希望你的所有願望都能實現...」</div>
         <div class="section-header">🎂 許願時間</div>
         <div class="candle-box">
             <div class="candle">
@@ -1020,7 +1043,8 @@
             </div>
         </div>
 
-        <!-- 8. 想和你一起做的事 List -->
+        <!-- 環節 9 開場引言 + 8. 想和你一起做的事 List -->
+        <div class="section-intro">「未來的日子還很長，我列了一張清單，想和你一項一項去解鎖...」</div>
         <div class="section-header">🌈 想和你一起做的事</div>
         <div class="todo-list">
             <div class="todo-item">🌅 一起去海邊看夕陽</div>
@@ -1031,7 +1055,8 @@
             <div class="todo-item" style="border-color: var(--pink-soft);">💕 一直在彼此身邊</div>
         </div>
 
-        <!-- 💬 悄悄話留言互動區 -->
+        <!-- 環節 10 開場引言 + 💬 悄悄話留言互動區 -->
+        <div class="section-intro">「看完這一整頁的故事，心裡有沒有什麼話想悄悄告訴我呢？」</div>
         <div class="reply-box">
             <p style="font-size: 0.9rem; color: var(--pink-soft); font-weight: 700;">💬 看完這封情書，想對安淇說什麼嗎？</p>
             <textarea class="reply-input" id="replyText" placeholder="寫下你想對安淇說的話..."></textarea>
@@ -1039,7 +1064,8 @@
             <p id="replyStatus" style="font-size: 0.8rem; color: var(--pink-bright); margin-top: 8px; display: none;"></p>
         </div>
 
-        <!-- 9. 結尾與送禮物 -->
+        <!-- 環節 11 開場引言 + 9. 結尾與送禮物 -->
+        <div class="section-intro">「這段線上旅程即將告一段落，但屬於我們的現實美好才剛要開始...」</div>
         <div class="ending-box">
             <div class="ending-title">生日快樂，佳維。</div>
             <p style="font-size: 0.9rem; color: var(--text-sub); margin-bottom: 10px;">謝謝你出現在我的世界 💕</p>
@@ -1215,7 +1241,7 @@
 
             if(isCorrect) {
                 btn.classList.add('correct');
-                feedback.innerHTML = "🎉 答對了！佳維真的很了解安淇！";
+                feedback.innerHTML = "🎉 答對了！佳維 REALLY 了解安淇！";
                 feedback.style.color = "#2ecc71";
                 confetti({ particleCount: 30, spread: 60, origin: { y: 0.7 } });
             } else {
