@@ -1,1375 +1,1009 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>我們的故事 · 為佳維的一封未完待續的情書</title>
-    <!-- Google Fonts & Canvas Confetti -->
-    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Noto+Serif+TC:wght@400;600&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-
-    <style>
-        :root {
-            --bg-dark: #121216;
-            --card-bg: rgba(255, 255, 255, 0.05);
-            --card-border: rgba(255, 141, 161, 0.25);
-            --text-cream: #FBF9F6;
-            --text-sub: #A0A0B0;
-            --pink-soft: #FF8DA1;
-            --pink-bright: #FF5A79;
-            --radius-card: 20px;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Zen Maru Gothic', 'Noto Serif TC', serif, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-cream);
-            line-height: 1.8;
-            padding: 0;
-            margin: 0;
-            overflow-x: hidden;
-            min-height: 100vh;
-            position: relative;
-        }
-
-        /* 背景星空 Canvas */
-        #starfield {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        /* 飄落愛心容器 */
-        .hearts-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            overflow: hidden;
-        }
-
-        .heart-particle {
-            position: absolute;
-            color: var(--pink-soft);
-            opacity: 0.6;
-            animation: floatDown linear infinite;
-        }
-
-        @keyframes floatDown {
-            0% { transform: translateY(-10vh) rotate(0deg) scale(0.8); opacity: 0; }
-            50% { opacity: 0.8; }
-            100% { transform: translateY(105vh) rotate(360deg) scale(1.2); opacity: 0; }
-        }
-
-        .container {
-            max-width: 480px;
-            margin: 0 auto;
-            padding: 24px 20px 80px;
-            position: relative;
-            z-index: 1;
-        }
-
-        /* 🎵 背景音樂播放器按鈕 */
-        .music-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 48px;
-            height: 48px;
-            background: rgba(255, 141, 161, 0.25);
-            border: 1px solid var(--pink-soft);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-            cursor: pointer;
-            z-index: 1000;
-            backdrop-filter: blur(5px);
-            transition: all 0.3s;
-            box-shadow: 0 0 15px rgba(255, 141, 161, 0.3);
-        }
-        .music-btn.playing {
-            animation: rotate 4s linear infinite;
-            background: var(--pink-soft);
-            color: var(--bg-dark);
-            box-shadow: 0 0 20px var(--pink-soft);
-        }
-        @keyframes rotate { 100% { transform: rotate(360deg); } }
-
-        /* 1. 開場全螢幕畫面 */
-        #intro-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--bg-dark);
-            z-index: 999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 30px;
-            text-align: center;
-            transition: opacity 1s ease, visibility 1s ease;
-        }
-
-        .typewriter-text {
-            font-size: 1.25rem;
-            color: var(--text-cream);
-            line-height: 2;
-            min-height: 120px;
-            font-family: 'Noto Serif TC', serif;
-            letter-spacing: 1px;
-        }
-
-        .intro-choice-box {
-            margin-top: 30px;
-            display: flex;
-            gap: 15px;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.5s ease;
-            pointer-events: none;
-        }
-
-        .intro-choice-box.show {
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: auto;
-        }
-
-        .choice-btn {
-            padding: 12px 28px;
-            background: transparent;
-            border: 1.5px solid var(--pink-soft);
-            color: var(--pink-soft);
-            font-size: 0.95rem;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            letter-spacing: 1px;
-        }
-
-        .choice-btn.yes {
-            background: var(--pink-soft);
-            color: var(--bg-dark);
-            font-weight: 700;
-        }
-
-        .choice-btn:active {
-            transform: scale(0.95);
-        }
-
-        .warning-text {
-            color: var(--pink-bright);
-            font-size: 0.9rem;
-            margin-top: 15px;
-            min-height: 24px;
-            font-weight: 700;
-        }
-
-        /* 區塊標題打字機效果支援 */
-        .section-header {
-            font-size: 1.2rem;
-            color: var(--pink-soft);
-            margin: 45px 0 20px;
-            letter-spacing: 1.5px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-        }
-
-        .section-header::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: linear-gradient(90deg, var(--card-border), transparent);
-        }
-
-        /* 打字游標游標效果 (選配) */
-        .typing-cursor::after {
-            content: '|';
-            animation: blink 0.7s infinite;
-            color: var(--pink-soft);
-            margin-left: 2px;
-        }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-
-        /* ⏳ 愛情計時器卡片 */
-        .timer-card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: var(--radius-card);
-            padding: 20px;
-            text-align: center;
-            backdrop-filter: blur(8px);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            animation: pulseGlow 3s infinite alternate;
-        }
-
-        @keyframes pulseGlow {
-            0% { box-shadow: 0 0 10px rgba(255, 141, 161, 0.1); }
-            100% { box-shadow: 0 0 20px rgba(255, 141, 161, 0.3); }
-        }
-
-        .timer-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin-top: 12px;
-        }
-
-        .timer-unit {
-            background: rgba(255, 141, 161, 0.08);
-            border: 1px solid var(--card-border);
-            border-radius: 12px;
-            padding: 10px 4px;
-        }
-
-        .timer-num {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--pink-soft);
-        }
-
-        .timer-label {
-            font-size: 0.72rem;
-            color: var(--text-sub);
-        }
-
-        /* 信封卡片 */
-        .envelope-wrapper {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: var(--radius-card);
-            padding: 30px 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            backdrop-filter: blur(8px);
-        }
-
-        .envelope-wrapper:hover {
-            transform: translateY(-3px);
-            border-color: var(--pink-soft);
-        }
-
-        .envelope-icon {
-            font-size: 3rem;
-            margin-bottom: 10px;
-            display: inline-block;
-            transition: transform 0.5s ease;
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
-        }
-
-        .letter-paper {
-            display: none;
-            margin-top: 20px;
-            text-align: left;
-            font-size: 0.92rem;
-            color: var(--text-cream);
-            line-height: 2;
-            font-family: 'Noto Serif TC', serif;
-            border-top: 1px dashed var(--card-border);
-            padding-top: 20px;
-            white-space: pre-line;
-            animation: fadeIn 1s ease forwards;
-        }
-
-        /* 3. 我們的故事 (時間軸) */
-        .timeline {
-            position: relative;
-            padding-left: 20px;
-            border-left: 1.5px solid var(--card-border);
-        }
-
-        .timeline-item {
-            position: relative;
-            margin-bottom: 24px;
-        }
-
-        .timeline-dot {
-            position: absolute;
-            left: -26.5px;
-            top: 4px;
-            width: 11px;
-            height: 11px;
-            border-radius: 50%;
-            background: var(--pink-soft);
-            box-shadow: 0 0 10px var(--pink-soft);
-        }
-
-        .timeline-title {
-            font-size: 0.95rem;
-            color: var(--pink-soft);
-            font-weight: 700;
-            margin-bottom: 6px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .timeline-card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 14px;
-            padding: 14px 16px;
-            font-size: 0.9rem;
-            color: var(--text-sub);
-            display: none;
-            margin-top: 8px;
-            line-height: 1.8;
-            backdrop-filter: blur(5px);
-            animation: slideDown 0.4s ease-out;
-        }
-
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* 🧩 愛情小測驗 Quiz */
-        .quiz-card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: var(--radius-card);
-            padding: 20px;
-            backdrop-filter: blur(8px);
-            margin-bottom: 15px;
-            transition: all 0.3s;
-        }
-
-        .quiz-card:hover {
-            border-color: var(--pink-soft);
-        }
-
-        .quiz-question {
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: var(--text-cream);
-            margin-bottom: 12px;
-        }
-
-        .quiz-options {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .quiz-option-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--card-border);
-            color: var(--text-cream);
-            padding: 10px;
-            border-radius: 12px;
-            font-size: 0.88rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .quiz-option-btn:hover {
-            background: rgba(255, 141, 161, 0.15);
-            border-color: var(--pink-soft);
-        }
-
-        .quiz-option-btn.correct {
-            background: rgba(46, 204, 113, 0.2) !important;
-            border-color: #2ecc71 !important;
-            color: #2ecc71 !important;
-            font-weight: 700;
-        }
-
-        .quiz-option-btn.wrong {
-            background: rgba(231, 76, 60, 0.2) !important;
-            border-color: #e74c3c !important;
-            color: #e74c3c !important;
-        }
-
-        .quiz-feedback {
-            font-size: 0.8rem;
-            margin-top: 8px;
-            min-height: 20px;
-            font-weight: 600;
-        }
-
-        /* 🗺️ 足跡地圖卡片 */
-        .footprint-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .footprint-card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 16px;
-            padding: 16px;
-            backdrop-filter: blur(5px);
-            transition: all 0.3s ease;
-        }
-
-        .footprint-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 5px 15px rgba(255, 141, 161, 0.2);
-        }
-
-        .footprint-tag {
-            font-size: 0.75rem;
-            color: var(--pink-soft);
-            border: 1px solid var(--pink-soft);
-            border-radius: 20px;
-            padding: 2px 8px;
-            display: inline-block;
-            margin-bottom: 8px;
-        }
-
-        .footprint-name {
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: var(--text-cream);
-            margin-bottom: 4px;
-        }
-
-        .footprint-desc {
-            font-size: 0.8rem;
-            color: var(--text-sub);
-            line-height: 1.5;
-        }
-
-        /* 4. 翻牌卡片 (10個理由) */
-        .reasons-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .flip-card {
-            height: 100px;
-            perspective: 1000px;
-            cursor: pointer;
-        }
-
-        .flip-card.special {
-            grid-column: span 2;
-            height: 110px;
-        }
-
-        .flip-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            text-align: center;
-            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
-            transform-style: preserve-3d;
-        }
-
-        .flip-card.flipped .flip-inner {
-            transform: rotateY(180deg);
-        }
-
-        .flip-front, .flip-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 12px;
-            border: 1px solid var(--card-border);
-        }
-
-        .flip-front {
-            background: var(--card-bg);
-            color: var(--pink-soft);
-            font-weight: 700;
-            font-size: 0.95rem;
-            backdrop-filter: blur(5px);
-        }
-
-        .flip-back {
-            background: rgba(255, 141, 161, 0.12);
-            color: var(--text-cream);
-            transform: rotateY(180deg);
-            font-size: 0.88rem;
-            line-height: 1.6;
-        }
-
-        .flip-card.special .flip-front {
-            border-color: var(--pink-bright);
-            box-shadow: 0 0 15px rgba(255, 90, 121, 0.2);
-        }
-
-        /* 5. 抽獎卡 */
-        .lottery-box {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: var(--radius-card);
-            padding: 24px 20px;
-            text-align: center;
-            backdrop-filter: blur(8px);
-        }
-
-        .lottery-btn {
-            background: linear-gradient(135deg, var(--pink-soft), var(--pink-bright));
-            color: #fff;
-            border: none;
-            padding: 12px 28px;
-            font-size: 0.95rem;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: 700;
-            box-shadow: 0 4px 15px rgba(255, 90, 121, 0.3);
-            transition: transform 0.2s;
-        }
-
-        .lottery-btn:active { transform: scale(0.96); }
-
-        .prize-result {
-            margin-top: 18px;
-            padding: 16px;
-            border-radius: 14px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px dashed var(--pink-soft);
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-
-        /* 6. 頒獎典禮 */
-        .award-box {
-            background: linear-gradient(180deg, rgba(255,215,0,0.05) 0%, rgba(255,255,255,0.02) 100%);
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            border-radius: var(--radius-card);
-            padding: 28px 20px;
-            text-align: center;
-        }
-
-        .reveal-btn {
-            background: transparent;
-            border: 1px solid #ffd700;
-            color: #ffd700;
-            padding: 10px 24px;
-            border-radius: 50px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            margin-top: 12px;
-            transition: all 0.3s;
-        }
-
-        .reveal-btn:hover {
-            background: rgba(255, 215, 0, 0.2);
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-        }
-
-        .award-result {
-            display: none;
-            margin-top: 15px;
-            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .award-title {
-            font-size: 1.8rem;
-            color: #ffd700;
-            font-weight: 700;
-            text-shadow: 0 0 12px rgba(255,215,0,0.4);
-            margin: 8px 0;
-        }
-
-        /* 7. 吹蠟燭 */
-        .candle-box {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: var(--radius-card);
-            padding: 30px 20px;
-            text-align: center;
-        }
-
-        .candle {
-            width: 16px;
-            height: 55px;
-            background: linear-gradient(to bottom, #ffb3c1, #ff758f);
-            margin: 0 auto;
-            position: relative;
-            border-radius: 4px 4px 0 0;
-        }
-
-        .flame {
-            width: 14px;
-            height: 22px;
-            background: #ff9e00;
-            border-radius: 50% 50% 20% 20%;
-            position: absolute;
-            top: -22px;
-            left: 1px;
-            box-shadow: 0 0 12px #ff9e00, 0 0 25px #ff4d6d;
-            animation: flicker 0.2s infinite alternate;
-            cursor: pointer;
-        }
-
-        .flame.off { display: none; }
-
-        @keyframes flicker {
-            0% { transform: scale(1) rotate(-2deg); }
-            100% { transform: scale(1.15) rotate(2deg); }
-        }
-
-        .cake-base {
-            width: 90px;
-            height: 35px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid var(--card-border);
-            margin: 0 auto;
-            border-radius: 8px 8px 0 0;
-        }
-
-        .candle-wish-text {
-            margin-top: 20px;
-            font-size: 0.95rem;
-            color: var(--text-cream);
-            opacity: 0;
-            transition: opacity 1.5s ease;
-            font-family: 'Noto Serif TC', serif;
-            line-height: 1.9;
-        }
-
-        .candle-wish-text.show { opacity: 1; }
-
-        /* 8. 想和你一起做的事 List */
-        .todo-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .todo-item {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            padding: 14px 18px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 0.92rem;
-            color: var(--text-cream);
-            transition: transform 0.2s;
-        }
-
-        .todo-item:hover {
-            transform: translateX(5px);
-        }
-
-        /* 💬 悄悄話留言框 */
-        .reply-box {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: var(--radius-card);
-            padding: 22px;
-            margin-top: 35px;
-            text-align: center;
-        }
-
-        .reply-input {
-            width: 100%;
-            height: 85px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--card-border);
-            border-radius: 12px;
-            padding: 12px;
-            color: var(--text-cream);
-            font-size: 0.9rem;
-            margin: 12px 0;
-            resize: none;
-            outline: none;
-        }
-
-        .reply-input:focus {
-            border-color: var(--pink-soft);
-        }
-
-        /* 9. 結尾與送禮物 */
-        .ending-box {
-            text-align: center;
-            margin-top: 40px;
-            padding: 30px 20px;
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: var(--radius-card);
-            backdrop-filter: blur(8px);
-        }
-
-        .ending-title {
-            font-size: 1.35rem;
-            color: var(--pink-soft);
-            font-family: 'Noto Serif TC', serif;
-            margin-bottom: 8px;
-            letter-spacing: 1px;
-        }
-
-        .gift-btn {
-            margin-top: 20px;
-            background: linear-gradient(135deg, var(--pink-soft), var(--pink-bright));
-            color: #fff;
-            border: none;
-            padding: 14px 32px;
-            font-size: 1rem;
-            font-weight: 700;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 6px 20px rgba(255, 90, 121, 0.35);
-            transition: transform 0.2s;
-        }
-
-        .gift-btn:active { transform: scale(0.96); }
-
-        /* Modal 禮物彈窗 */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(6px);
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            padding: 20px;
-        }
-
-        .modal-content {
-            background: #1a1a22;
-            border-radius: 24px;
-            padding: 30px 22px;
-            text-align: center;
-            width: 100%;
-            max-width: 360px;
-            border: 1.5px solid var(--pink-soft);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes popIn {
-            0% { transform: scale(0.7); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Happy Birthday, 佳維！❤️</title>
+
+  <!-- Google Fonts & Canvas Confetti CDNs -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    /* ==========================================================================
+       1. 全局重置與變數 (Global Styles & Variables)
+       ========================================================================== */
+    :root {
+      --bg-color: #121216;
+      --card-bg: rgba(255, 255, 255, 0.05);
+      --card-border: rgba(255, 255, 255, 0.12);
+      --primary-pink: #FF8DA1;
+      --soft-pink: #FFC0CB;
+      --accent-gold: #FFD700;
+      --text-light: #F8F9FA;
+      --text-muted: #A0A5B5;
+      --font-main: 'Zen Maru Gothic', sans-serif;
+      --font-serif: 'Noto Serif TC', serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-light);
+      font-family: var(--font-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* 背景星空 Canvas 與心形飄落容器 */
+    #star-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .heart-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .falling-heart {
+      position: absolute;
+      color: var(--primary-pink);
+      opacity: 0.6;
+      animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(-10vh) rotate(0deg); opacity: 0.8; }
+      100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* 主內容容器 */
+    .container {
+      width: 100%;
+      max-width: 480px;
+      padding: 20px 16px 80px 16px;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* 通用卡片外觀 */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .card:hover {
+      border-color: rgba(255, 141, 161, 0.3);
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--primary-pink);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* 隱藏元素輔助類別 */
+    .hidden {
+      display: none !important;
+    }
+
+    /* ==========================================================================
+       2. 第一關：開場互動詢問 (Intro Gate)
+       ========================================================================== */
+    #intro-gate {
+      text-align: center;
+      margin-top: 20vh;
+    }
+
+    .typewriter-text {
+      font-size: 1.2rem;
+      line-height: 1.6;
+      min-height: 3.2em;
+      margin-bottom: 24px;
+      color: var(--text-light);
+    }
+
+    .btn-group {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      position: relative;
+      min-height: 50px;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, var(--primary-pink), #FF6B8B);
+      color: #fff;
+      border: none;
+      padding: 12px 28px;
+      font-size: 1rem;
+      font-weight: 700;
+      border-radius: 25px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(255, 141, 161, 0.4);
+      transition: all 0.2s ease;
+      font-family: var(--font-main);
+    }
+
+    .btn:active {
+      transform: scale(0.95);
+    }
+
+    .btn-no {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-muted);
+      box-shadow: none;
+      position: absolute;
+      transition: all 0.2s ease;
+    }
+
+    /* ==========================================================================
+       3. 核心內容區 (Main Content Sections)
+       ========================================================================== */
+
+    /* 頂部 Header & 計時器 */
+    .header-card {
+      text-align: center;
+    }
+
+    .header-card h1 {
+      font-size: 1.8rem;
+      font-family: var(--font-serif);
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .timer-box {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .timer-item {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 12px;
+      padding: 10px 4px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .timer-num {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary-pink);
+      display: block;
+    }
+
+    .timer-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* 手寫情書 (Envelope & Letter) */
+    .envelope-wrapper {
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .envelope {
+      width: 100%;
+      height: 120px;
+      background: rgba(255, 141, 161, 0.15);
+      border: 2px dashed var(--primary-pink);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .envelope:hover {
+      background: rgba(255, 141, 161, 0.25);
+    }
+
+    .letter-content {
+      font-family: var(--font-serif);
+      line-height: 1.8;
+      color: #E2E8F0;
+      font-size: 0.95rem;
+      white-space: pre-line;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px rgba(255, 255, 255, 0.1) solid;
+    }
+
+    /* 時間軸 (Timeline) */
+    .timeline {
+      position: relative;
+      padding-left: 20px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 6px;
+      top: 8px;
+      bottom: 8px;
+      width: 2px;
+      background: rgba(255, 141, 161, 0.3);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .timeline-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: -20px;
+      top: 4px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--primary-pink);
+      box-shadow: 0 0 10px var(--primary-pink);
+    }
+
+    .timeline-date {
+      font-size: 0.8rem;
+      color: var(--primary-pink);
+      font-weight: 700;
+    }
+
+    .timeline-text {
+      font-size: 0.9rem;
+      margin-top: 4px;
+      color: var(--text-light);
+    }
+
+    /* 小測驗 (Quiz) */
+    .quiz-option {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 12px 16px;
+      border-radius: 12px;
+      margin-top: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.9rem;
+    }
+
+    .quiz-option:hover {
+      background: rgba(255, 141, 161, 0.2);
+    }
+
+    .quiz-option.correct {
+      background: rgba(72, 187, 120, 0.2) !important;
+      border-color: #48BB78 !important;
+      color: #68D391;
+    }
+
+    .quiz-option.wrong {
+      background: rgba(245, 101, 101, 0.2) !important;
+      border-color: #F56565 !important;
+      color: #FEB2B2;
+    }
+
+    /* 翻牌：愛的10個理由 (Flip Cards Grid) */
+    .reason-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .flip-card {
+      background-color: transparent;
+      height: 90px;
+      perspective: 1000px;
+      cursor: pointer;
+    }
+
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+
+    .flip-card.flipped .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .flip-card-front, .flip-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+    }
+
+    .flip-card-front {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px dashed rgba(255, 141, 161, 0.5);
+      color: var(--primary-pink);
+      font-weight: bold;
+    }
+
+    .flip-card-back {
+      background: linear-gradient(135deg, rgba(255, 141, 161, 0.3), rgba(255, 107, 139, 0.3));
+      border: 1px solid var(--primary-pink);
+      color: #fff;
+      transform: rotateY(180deg);
+      font-size: 0.82rem;
+      line-height: 1.3;
+    }
+
+    /* 刮刮樂 / 抽獎券 (Lottery) */
+    .ticket-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .ticket-item {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .ticket-name {
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .ticket-btn {
+      background: var(--primary-pink);
+      border: none;
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 16px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      font-family: var(--font-main);
+    }
+
+    .ticket-btn.used {
+      background: rgba(255, 255, 255, 0.2);
+      color: var(--text-muted);
+      cursor: not-allowed;
+    }
+
+    /* 最佳男友頒獎典禮 (Award) */
+    .award-box {
+      text-align: center;
+      background: linear-gradient(180deg, rgba(255,215,0,0.1) 0%, rgba(0,0,0,0) 100%);
+      border: 1px solid rgba(255,215,0,0.3);
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .trophy-icon {
+      font-size: 3rem;
+      margin-bottom: 8px;
+    }
+
+    /* 生日蛋糕 & 吹蠟燭 (Cake) */
+    .cake-box {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .cake {
+      font-size: 4rem;
+      cursor: pointer;
+      user-select: none;
+      margin: 12px 0;
+      position: relative;
+      display: inline-block;
+    }
+
+    .flame {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.5rem;
+      animation: flicker 0.6s infinite alternate;
+    }
+
+    @keyframes flicker {
+      0% { opacity: 0.8; transform: translateX(-50%) scale(0.9); }
+      100% { opacity: 1; transform: translateX(-50%) scale(1.1); }
+    }
+
+    /* 悄悄話留言框 (Message Box) */
+    .msg-input {
+      width: 100%;
+      height: 80px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 12px;
+      color: #fff;
+      font-family: var(--font-main);
+      resize: none;
+      margin-bottom: 12px;
+    }
+
+    .msg-input:focus {
+      outline: none;
+      border-color: var(--primary-pink);
+    }
+
+    /* 浮動 BGM 控制鈕 */
+    .bgm-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255, 141, 161, 0.8);
+      border: none;
+      color: #fff;
+      font-size: 1.2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      z-index: 99;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      backdrop-filter: blur(4px);
+    }
+
+    .bgm-active {
+      animation: spin 4s linear infinite;
+    }
+
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+
+    /* 彈窗 Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(5px);
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background: #1A1A24;
+      border: 1px solid var(--primary-pink);
+      border-radius: 20px;
+      padding: 24px;
+      max-width: 320px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .modal-content h3 {
+      color: var(--primary-pink);
+      margin-bottom: 12px;
+    }
+
+    .modal-content p {
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: 20px;
+      color: #CBD5E0;
+    }
+  </style>
 </head>
 <body>
 
-    <!-- 星空背景 Canvas -->
-    <canvas id="starfield"></canvas>
+  <!-- 背景星空與愛心粒子 -->
+  <canvas id="star-canvas"></canvas>
+  <div class="heart-container" id="heart-container"></div>
 
-    <!-- 愛心飄落動畫容器 -->
-    <div class="hearts-container" id="heartsContainer"></div>
+  <!-- 背景音樂音訊 (採用無版權輕柔背景音樂) -->
+  <audio id="bgm" loop preload="auto">
+    <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3" type="audio/mpeg">
+  </audio>
 
-    <!-- 🎵 背景音樂播放按鈕 -->
-    <div class="music-btn" id="musicBtn" onclick="toggleMusic()">🎵</div>
-    <!-- 背景音樂：Everytime We Touch (溫柔鋼琴版 Piano Cover) -->
-    <audio id="bgm" loop src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3"></audio>
+  <!-- 浮動音樂開關按鈕 -->
+  <button class="bgm-btn" id="bgm-btn" onclick="toggleBGM()">🎵</button>
 
-    <!-- 1. 開場全螢幕畫面 -->
-    <div id="intro-screen">
-        <div class="typewriter-text" id="typewriter"></div>
-        <div class="intro-choice-box" id="choiceBox">
-            <button class="choice-btn yes" onclick="handleChoice(true)">是，開啟旅程 ✨</button>
-            <button class="choice-btn" onclick="handleChoice(false)">否 🙅‍♂️</button>
-        </div>
-        <div class="warning-text" id="warningMsg"></div>
+  <div class="container">
+
+    <!-- ==========================================================================
+       第一關：闖關入口 (Intro Gate)
+       ========================================================================== -->
+    <div id="intro-gate" class="card">
+      <div id="typewriter" class="typewriter-text"></div>
+      <div class="btn-group" id="btn-group" style="display: none;">
+        <button class="btn" onclick="handleChoice(true)">是，我是最佳男友 ❤️</button>
+        <button class="btn btn-no" id="btn-no" onmouseover="dodgeNoBtn()" onclick="dodgeNoBtn()">不是...</button>
+      </div>
     </div>
 
-    <!-- 主要內容區 -->
-    <div class="container">
+    <!-- ==========================================================================
+       主內容區域 (解鎖後顯示)
+       ========================================================================== -->
+    <div id="main-content" class="hidden">
 
-        <!-- ⏳ 我們在一起的時光計時器 -->
-        <div class="timer-card">
-            <p style="font-size: 0.85rem; color: var(--text-sub);" class="typewriter-header">佳維，我們已經在一起：</p>
-            <div class="timer-grid">
-                <div class="timer-unit"><div class="timer-num" id="days">0</div><div class="timer-label">天</div></div>
-                <div class="timer-unit"><div class="timer-num" id="hours">0</div><div class="timer-label">小時</div></div>
-                <div class="timer-unit"><div class="timer-num" id="minutes">0</div><div class="timer-label">分</div></div>
-                <div class="timer-unit"><div class="timer-num" id="seconds">0</div><div class="timer-label">秒</div></div>
-            </div>
-        </div>
-
-        <!-- 2. 給佳維的信封 -->
-        <div class="section-header typewriter-header">💌 給佳維的一封信</div>
-        <div class="envelope-wrapper" onclick="openEnvelope()">
-            <div class="envelope-icon" id="envIcon">✉️</div>
-            <p id="envHint" style="font-size: 0.9rem; color: var(--pink-soft);">（點擊開啟手寫信）</p>
-            <div class="letter-paper" id="letterPaper">
-生日快樂，我最重要的你。
-
-其實我很少把這些話說得很完整，但我真的很想讓你知道，和你在一起之後，我變得很不一樣。以前的我可能比較容易不安、想很多，但你總是很有耐心地陪著我，慢慢讓我知道，原來有人可以這麼認真對待我、這麼在乎我的情緒。你會記得我隨口說過的小事，會在我想吃什麼的時候直接帶我去，會在我不開心的時候不讓我一個人撐著，總是把我哄到笑出來為止。
-
-我很喜歡跟你在一起的那些日常，不一定要去哪裡、不一定要做什麼特別的事，只要是跟你，就會變得很有意義。走路的時候你會讓我走裡面，吃東西的時候你會先顧我，很多小細節你都默默在做，這些我其實都有放在心裡，也一直很珍惜。你讓我覺得自己被保護、被照顧，也讓我很安心地做自己，甚至可以任性一點、依賴一點，因為我知道你會接住我。
-
-有時候我也會想，我是不是越來越離不開你了，但這種感覺不是壞的，而是因為你真的對我很好，好到我會開始期待未來有你在的每一天。謝謝你一直包容我、照顧我，也謝謝你讓我知道什麼叫做被愛。
-
-未來我也想變得更好，不只是被你照顧的人，而是可以陪著你、支持你的人。不管之後遇到什麼，我都希望我們可以一起面對，一起走很久很久。
-
-最後還是要再說一次，生日快樂。希望你的每一個願望都慢慢實現，而我也會一直在你身邊。
-            </div>
-        </div>
-
-        <!-- 3. 我們的故事時間軸 -->
-        <div class="section-header typewriter-header">📖 我們的回憶碎片</div>
-        <div class="timeline">
-            <div class="timeline-item">
-                <div class="timeline-dot"></div>
-                <div class="timeline-title" onclick="toggleTimeline(0)">
-                    <span>🌸 初次認識與電影之約</span>
-                    <span style="font-size: 0.8rem; color: var(--text-sub);">＋</span>
-                </div>
-                <div class="timeline-card">那一天的故事，是從你遞出的看電影邀請開始的。那是我第一次走向你，也是我們浪漫故事的序幕。</div>
-            </div>
-
-            <div class="timeline-item">
-                <div class="timeline-dot"></div>
-                <div class="timeline-title" onclick="toggleTimeline(1)">
-                    <span>🎬 2025/06/07 第一次正式約會</span>
-                    <span style="font-size: 0.8rem; color: var(--text-sub);">＋</span>
-                </div>
-                <div class="timeline-card">「妳好，請問妳是余安淇嗎？」緊張得只能盯著螢幕，離去時你留下的雨傘「小黃」與巧克力，把溫暖全塞給了我。</div>
-            </div>
-
-            <div class="timeline-item">
-                <div class="timeline-dot"></div>
-                <div class="timeline-title" onclick="toggleTimeline(2)">
-                    <span>🍜 2025/06/14 迷迷糊糊的答應</span>
-                    <span style="font-size: 0.8rem; color: var(--text-sub);">＋</span>
-                </div>
-                <div class="timeline-card">一起吃了美味的拉麵，晚上你跟我告白，我居然是從睡夢中醒來迷迷糊糊點頭的！你就這樣用三個月追到了我。</div>
-            </div>
-
-            <div class="timeline-item">
-                <div class="timeline-dot"></div>
-                <div class="timeline-title" onclick="toggleTimeline(3)">
-                    <span>✨ 開始確定「就是你」的瞬間</span>
-                    <span style="font-size: 0.8rem; color: var(--text-sub);">＋</span>
-                </div>
-                <div class="timeline-card">是每一次走路時你默默把我推到內側、是幫我吃光剩飯的貼心，也是不論如何都耐心把我哄笑的瞬間。</div>
-            </div>
-        </div>
-
-        <!-- 🧩 愛情小測驗 -->
-        <div class="section-header typewriter-header">🧩 考考佳維：安淇了解度大測試</div>
-        <p style="font-size: 0.8rem; color: var(--text-sub); margin-bottom: 14px; text-align: center;">看你對安淇有多了解！答對有驚喜喔 ✨</p>
+      <!-- 1. Header 暨 在一起時長計時器 -->
+      <section class="card header-card">
+        <h1>Happy Birthday! 🎂</h1>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">致世界上最棒的佳維</p>
         
-        <!-- 題目 1 -->
-        <div class="quiz-card">
-            <div class="quiz-question">1. 安淇最喜歡吃什麼？</div>
-            <div class="quiz-options">
-                <button class="quiz-option-btn" onclick="checkQuiz(this, true, 1)">蛋糕 🍰</button>
-                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 1)">拉麵 🍜</button>
-                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 1)">地瓜球 🍠</button>
-                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 1)">舒芙蕾 🥞</button>
-            </div>
-            <div class="quiz-feedback" id="quiz-feedback-1"></div>
+        <div style="margin-top: 16px; font-size: 0.85rem; color: var(--soft-pink);">我們已經在一起：</div>
+        <div class="timer-box">
+          <div class="timer-item"><span class="timer-num" id="t-days">0</span><span class="timer-label">天</span></div>
+          <div class="timer-item"><span class="timer-num" id="t-hours">0</span><span class="timer-label">時</span></div>
+          <div class="timer-item"><span class="timer-num" id="t-mins">0</span><span class="timer-label">分</span></div>
+          <div class="timer-item"><span class="timer-num" id="t-secs">0</span><span class="timer-label">秒</span></div>
         </div>
+      </section>
 
-        <!-- 題目 2 -->
-        <div class="quiz-card">
-            <div class="quiz-question">2. 安淇喜歡的東西是什麼？</div>
-            <div class="quiz-options">
-                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 2)">吉伊卡哇 🐱</button>
-                <button class="quiz-option-btn" onclick="checkQuiz(this, true, 2)">人魚漢頓 🐟</button>
-                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 2)">庫洛米 😈</button>
-                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 2)">大耳狗 🐶</button>
-            </div>
-            <div class="quiz-feedback" id="quiz-feedback-2"></div>
+      <!-- 2. 手寫情書 (Envelope & Letter) -->
+      <section class="card">
+        <div class="card-title">💌 寫給佳維的一封信</div>
+        <div class="envelope-wrapper" id="envelope-wrapper" onclick="openLetter()">
+          <div class="envelope">
+            <span style="font-size: 2rem;">✉️</span>
+            <span style="font-size: 0.85rem; color: var(--soft-pink);">點擊開啟安淇的心意</span>
+          </div>
         </div>
+        <div id="letter-content" class="letter-content hidden">
+          佳維：
 
-        <!-- 題目 3 -->
-        <div class="quiz-card">
-            <div class="quiz-question">3. 安淇最喜歡的人是誰？</div>
-            <div class="quiz-options">
-                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 3)">金秀賢 ✨</button>
-                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 3)">許光漢 💫</button>
-                <button class="quiz-option-btn" onclick="checkQuiz(this, true, 3)">佳維 ♥️</button>
-                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 3)">車銀優 ✨</button>
-            </div>
-            <div class="quiz-feedback" id="quiz-feedback-3"></div>
+          生日快樂！✨
+          不知不覺我們已經一起走過了這麼多日子。謝謝你總是包容我的小脾氣，給予我滿滿的安全感與溫暖。
+          
+          每次只要有你在身邊，我就覺得很安心。不論是起去吃美食、看風景，還是只是平淡地窩在一起，對我來說都是最寶貴的時光。
+
+          新的一歲，願你所有的願望都能實現，工作順利、平安健康。最重要的是，未來的每一個生日，我都想陪你一起過！❤️
+
+          最愛你的 安淇 筆 ✍️
         </div>
+      </section>
 
-        <!-- 題目 4 -->
-        <div class="quiz-card">
-            <div class="quiz-question">4. 安淇不開心要怎麼哄？</div>
-            <div class="quiz-options">
-                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 4)">罰站三小時 🧍‍♂️</button>
-                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 4)">講冷笑話 🥶</button>
-                <button class="quiz-option-btn" onclick="checkQuiz(this, false, 4)">假裝沒看到 🙈</button>
-                <button class="quiz-option-btn" onclick="checkQuiz(this, true, 4)">抱抱+親親 💋</button>
-            </div>
-            <div class="quiz-feedback" id="quiz-feedback-4"></div>
+      <!-- 3. 回憶時間軸 (Memory Timeline) -->
+      <section class="card">
+        <div class="card-title">✨ 我們的時光軌跡</div>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-date">2025 年 06 月 14 日</div>
+            <div class="timeline-text">故事的開始，我們正式在一起 💕</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-date">我們的第一次旅行</div>
+            <div class="timeline-text">留下了好多美好的回憶與照片 📸</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-date">無數個平凡卻溫暖的日常</div>
+            <div class="timeline-text">一起吃晚餐、聊天、互相陪伴的每個深夜 🌙</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-date">Today</div>
+            <div class="timeline-text">陪佳維度過特別的生日！🎉</div>
+          </div>
         </div>
+      </section>
 
-
-        <!-- 🗺️ 我們的紀念足跡 -->
-        <div class="section-header typewriter-header">🗺️ 我們的足跡與回憶</div>
-        <div class="footprint-grid">
-            <div class="footprint-card">
-                <span class="footprint-tag">📍 第一個市集</span>
-                <div class="footprint-name">馬祖新村</div>
-                <div class="footprint-desc">一起逛的第一個市集，牽著手感受文青與慢活的小美好。</div>
-            </div>
-            <div class="footprint-card">
-                <span class="footprint-tag">🍛 第一餐</span>
-                <div class="footprint-name">CoCo壹番屋</div>
-                <div class="footprint-desc">我們第一次一起吃飯的地方，開啟了兩個人的美食地圖。</div>
-            </div>
-            <div class="footprint-card">
-                <span class="footprint-tag">🌅 第一個生日</span>
-                <div class="footprint-name">淡水</div>
-                <div class="footprint-desc">和你一起過的你的第一個生日，伴著夕陽與海風的浪漫。</div>
-            </div>
-            <div class="footprint-card">
-                <span class="footprint-tag">🍪 第一塊餅乾</span>
-                <div class="footprint-name">自己做烘焙聚</div>
-                <div class="footprint-desc">第一次一起做餅乾，甜甜的手作過程就像我們的回憶。</div>
-            </div>
+      <!-- 4. 安淇小測驗 (Quiz) -->
+      <section class="card">
+        <div class="card-title">🧩 安淇的隨堂小測驗</div>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">題目：安淇最喜歡佳維哪一點？</p>
+        <div id="quiz-options">
+          <div class="quiz-option" onclick="checkQuiz(this, false)">A. 帥氣迷人的外表</div>
+          <div class="quiz-option" onclick="checkQuiz(this, false)">B. 無微不至的體貼溫柔</div>
+          <div class="quiz-option" onclick="checkQuiz(this, false)">C. 幽默風趣又可靠</div>
+          <div class="quiz-option" onclick="checkQuiz(this, true)">D. 以上全部都是！無可挑剔！❤️</div>
         </div>
+        <p id="quiz-msg" style="margin-top: 12px; font-size: 0.85rem; color: var(--primary-pink);" class="hidden"></p>
+      </section>
 
-        <!-- 4. 喜歡你的10個理由 -->
-        <div class="section-header typewriter-header">💖 喜歡你的 10 個理由</div>
-        <p style="font-size: 0.8rem; color: var(--text-sub); margin-bottom: 14px; text-align: center;">✨ 點擊卡片翻開秘密 ✨</p>
-        <div class="reasons-grid">
-            <div class="flip-card" onclick="this.classList.toggle('flipped')">
-                <div class="flip-inner"><div class="flip-front">01. 溫柔</div><div class="flip-back">總是很有耐心、溫柔地陪著我</div></div>
-            </div>
-            <div class="flip-card" onclick="this.classList.toggle('flipped')">
-                <div class="flip-inner"><div class="flip-front">02. 細心</div><div class="flip-back">會記得我隨口說過的每一件小事</div></div>
-            </div>
-            <div class="flip-card" onclick="this.classList.toggle('flipped')">
-                <div class="flip-inner"><div class="flip-front">03. 笑容</div><div class="flip-back">你笑起來的時候超級好看</div></div>
-            </div>
-            <div class="flip-card" onclick="this.classList.toggle('flipped')">
-                <div class="flip-inner"><div class="flip-front">04. 貼心</div><div class="flip-back">每次都主動幫我吃完吃不下的東西</div></div>
-            </div>
-            <div class="flip-card" onclick="this.classList.toggle('flipped')">
-                <div class="flip-inner"><div class="flip-front">05. 紳士</div><div class="flip-back">走路時永遠讓我走在馬路內側</div></div>
-            </div>
-            <div class="flip-card" onclick="this.classList.toggle('flipped')">
-                <div class="flip-inner"><div class="flip-front">06. 偏愛</div><div class="flip-back">不論何時都會把我哄笑、照顧我</div></div>
-            </div>
-            <div class="flip-card" onclick="this.classList.toggle('flipped')">
-                <div class="flip-inner"><div class="flip-front">07. 努力</div><div class="flip-back">你其實比你自己想的還要更努力</div></div>
-            </div>
-            <div class="flip-card" onclick="this.classList.toggle('flipped')">
-                <div class="flip-inner"><div class="flip-front">08. 安心</div><div class="flip-back">讓我可以放心地做自己與依賴你</div></div>
-            </div>
-            <div class="flip-card" onclick="this.classList.toggle('flipped')">
-                <div class="flip-inner"><div class="flip-front">09. 好脾氣</div><div class="flip-back">脾氣超級好，從不對我發脾氣</div></div>
-            </div>
-            <div class="flip-card special" onclick="this.classList.toggle('flipped')">
-                <div class="flip-inner"><div class="flip-front">10. 無可取代 ♥</div><div class="flip-back">因為你是佳維，這個世界上獨一無二的你</div></div>
-            </div>
+      <!-- 5. 翻牌：喜歡佳維的 10 個理由 -->
+      <section class="card">
+        <div class="card-title">💖 喜歡佳維的 10 個理由</div>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">點擊卡片翻面看安淇的真心話：</p>
+        <div class="reason-grid" id="reason-grid">
+          <!-- 由 JS 動態生成 10 張卡片 -->
         </div>
+      </section>
 
-        <!-- 5. 愛情兌換券抽獎 -->
-        <div class="section-header typewriter-header">🎰 愛情兌換券抽獎</div>
-        <div class="lottery-box">
-            <p style="font-size: 0.88rem; color: var(--text-sub); margin-bottom: 16px;">佳維專屬！點擊抽取你的驚喜大獎 🎁</p>
-            <button class="lottery-btn" onclick="drawPrize()">🎲 試試手氣抽大獎</button>
-            <div class="prize-result" id="prizeResult">
-                <div id="prizeTitle" style="font-size: 1.15rem; color: #ffd700; font-weight: 700; margin-bottom: 4px;"></div>
-                <div id="prizeDesc" style="font-size: 0.9rem; color: var(--text-cream);"></div>
-                <div id="prizeCount" style="font-size: 0.78rem; color: var(--text-sub); margin-top: 8px;"></div>
-            </div>
+      <!-- 6. 生日專屬兌換券 (Tickets) -->
+      <section class="card">
+        <div class="card-title">🎟️ 佳維專屬生日特權券</div>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">隨時向安淇出示使用，不可拒絕！</p>
+        <div class="ticket-container">
+          <div class="ticket-item">
+            <span class="ticket-name">按摩服務券 💆‍♂️</span>
+            <button class="ticket-btn" onclick="useTicket(this)">兌換</button>
+          </div>
+          <div class="ticket-item">
+            <span class="ticket-name">免做家事券 🧹</span>
+            <button class="ticket-btn" onclick="useTicket(this)">兌換</button>
+          </div>
+          <div class="ticket-item">
+            <span class="ticket-name">指定美食大餐券 🥩</span>
+            <button class="ticket-btn" onclick="useTicket(this)">兌換</button>
+          </div>
+          <div class="ticket-item">
+            <span class="ticket-name">生氣原諒券 🥺</span>
+            <button class="ticket-btn" onclick="useTicket(this)">兌換</button>
+          </div>
+          <div class="ticket-item">
+            <span class="ticket-name">無條件抱抱/親親券 💋</span>
+            <button class="ticket-btn" onclick="useTicket(this)">兌換</button>
+          </div>
         </div>
+      </section>
 
-        <!-- 6. 最佳男友頒獎典禮 -->
-        <div class="section-header typewriter-header">🏆 頒獎典禮</div>
+      <!-- 7. 最佳男友頒獎典禮 (Award) -->
+      <section class="card">
         <div class="award-box">
-            <p style="font-size: 0.92rem; color: var(--text-cream);">榮獲本年度最佳男友的是——</p>
-            <button class="reveal-btn" id="revealBtn" onclick="revealAward()">✨ 揭曉得獎者 ✨</button>
-            <div class="award-result" id="awardResult">
-                <div class="award-title">🏆 佳維 🏆</div>
-                <p style="font-size: 0.85rem; color: #ffd700; opacity: 0.9;">實至名歸 · 最佳男友獎</p>
-            </div>
+          <div class="trophy-icon">🏆</div>
+          <h2 style="color: var(--accent-gold); font-size: 1.3rem; margin-bottom: 8px;">年度最佳男友獎</h2>
+          <p style="font-size: 0.9rem; color: var(--text-light); line-height: 1.6;">
+            特此頒發給 <strong>佳維</strong> 先生<br>
+            感謝您在過去一年中展現卓越的耐心、無盡的溫柔與爆棚的帥氣。經評審安淇一致通過，獲頒此榮譽！
+          </p>
         </div>
+      </section>
 
-        <!-- 7. 吹蠟燭 -->
-        <div class="section-header typewriter-header">🎂 許願時間</div>
-        <div class="candle-box">
-            <div class="candle">
-                <div class="flame" id="flame" onclick="blowCandle()"></div>
-            </div>
-            <div class="cake-base"></div>
-            <p style="font-size: 0.8rem; color: var(--text-sub); margin-top: 12px;" id="candleHint">（點擊火焰吹熄蠟燭）</p>
-            <div class="candle-wish-text" id="wishText">
-                願望可以許，<br>
-                但我希望你的願望裡，有我。
-            </div>
+      <!-- 8. 許願吹蠟燭互動 (Blow Candle) -->
+      <section class="card cake-box">
+        <div class="card-title">🎂 許個願吧！</div>
+        <p style="font-size: 0.85rem; color: var(--text-muted);">閉上眼睛許願，然後「點擊蠟燭」吹熄它：</p>
+        <div class="cake" id="cake" onclick="blowCandle()">
+          <span class="flame" id="flame">🔥</span>
+          🎂
         </div>
+        <p id="candle-msg" style="font-size: 0.85rem; color: var(--soft-pink);">燭光閃爍中...</p>
+      </section>
 
-        <!-- 8. 想和你一起做的事 List -->
-        <div class="section-header typewriter-header">🌈 想和你一起做的事</div>
-        <div class="todo-list">
-            <div class="todo-item">🌅 一起去海邊看夕陽</div>
-            <div class="todo-item">🍜 半夜突然想吃就去吃宵夜</div>
-            <div class="todo-item">✈️ 解鎖更多沒去過的城市旅行</div>
-            <div class="todo-item">🎬 窩在家看一整天的電影</div>
-            <div class="todo-item">🍜 一起去吃遍各式各樣美味的拉麵</div>
-            <div class="todo-item" style="border-color: var(--pink-soft);">💕 一直在彼此身邊</div>
-        </div>
+      <!-- 9. 悄悄話留言框 (Message) -->
+      <section class="card">
+        <div class="card-title">💬 給安淇的悄悄話</div>
+        <textarea class="msg-input" id="user-msg" placeholder="輸入你想對安淇說的話..."></textarea>
+        <button class="btn" style="width: 100%;" onclick="sendMsg()">發送悄悄話 ✨</button>
+      </section>
 
-        <!-- 💬 悄悄話留言互動區 -->
-        <div class="reply-box">
-            <p style="font-size: 0.9rem; color: var(--pink-soft); font-weight: 700;" class="typewriter-header">💬 看完這封情書，想對安淇說什麼嗎？</p>
-            <textarea class="reply-input" id="replyText" placeholder="寫下你想對安淇說的話..."></textarea>
-            <button class="choice-btn yes" onclick="sendReply()">送出悄悄話 ❤️</button>
-            <p id="replyStatus" style="font-size: 0.8rem; color: var(--pink-bright); margin-top: 8px; display: none;"></p>
-        </div>
-
-        <!-- 9. 結尾與送禮物 -->
-        <div class="ending-box">
-            <div class="ending-title typewriter-header">生日快樂，佳維。</div>
-            <p style="font-size: 0.9rem; color: var(--text-sub); margin-bottom: 10px;">謝謝你出現在我的世界 💕</p>
-            
-            <button class="gift-btn" onclick="openGiftModal()">🎁 點擊解鎖實體生日禮物</button>
-        </div>
+      <!-- 10. 生日禮物彈窗觸發 (Gift) -->
+      <section class="card" style="text-align: center;">
+        <div class="card-title" style="justify-content: center;">🎁 還有最後一個驚喜...</div>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">安淇為你準備的生日禮物</p>
+        <button class="btn" onclick="openGiftModal()">開啓生日禮物 📦</button>
+      </section>
 
     </div>
+  </div>
 
-    <!-- 送禮物 Modal 彈窗 -->
-    <div class="modal" id="giftModal">
-        <div class="modal-content">
-            <div style="font-size: 3rem; margin-bottom: 10px;">🎉</div>
-            <h2 style="color: var(--pink-soft); font-size: 1.25rem; font-family: 'Noto Serif TC', serif;">生日快樂，佳維！</h2>
-            <p style="margin: 15px 0; font-size: 0.9rem; color: var(--text-sub); line-height: 1.8;">
-                這段旅程的最後，還有一份專屬於你的實體禮物喔！<br>
-                現在請向安淇領取你的生日禮物吧 🎁✨
-            </p>
-            <button onclick="closeGiftModal()" style="padding: 10px 26px; background: var(--pink-soft); color: var(--bg-dark); border: none; border-radius: 50px; cursor: pointer; font-weight: 700; margin-top: 5px;">開心收下 ❤️</button>
-        </div>
+  <!-- 彈窗 Modal -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h3 id="modal-title">🎁 驚喜禮物</h3>
+      <p id="modal-body">禮物內容說明...</p>
+      <button class="btn" onclick="closeModal()">收下了！❤️</button>
     </div>
+  </div>
 
-    <script>
-        // --- ⏳ 在一起的時間計時器 ---
-        const startDate = new Date('2025-06-14T00:00:00');
+  <script>
+    /* ==========================================================================
+       1. 星空繪製 (Canvas Background)
+       ========================================================================== */
+    const canvas = document.getElementById('star-canvas');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
 
-        function updateTimer() {
-            const now = new Date();
-            const diff = now - startDate;
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      initStars();
+    }
 
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-            const minutes = Math.floor((diff / 1000 / 60) % 60);
-            const seconds = Math.floor((diff / 1000) % 60);
+    function initStars() {
+      stars = [];
+      const count = Math.floor((canvas.width * canvas.height) / 3000);
+      for (let i = 0; i < count; i++) {
+        stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          radius: Math.random() * 1.5,
+          alpha: Math.random(),
+          speed: Math.random() * 0.02 + 0.005
+        });
+      }
+    }
 
-            document.getElementById('days').innerText = days;
-            document.getElementById('hours').innerText = hours;
-            document.getElementById('minutes').innerText = minutes;
-            document.getElementById('seconds').innerText = seconds;
+    function drawStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      stars.forEach(star => {
+        star.alpha += star.speed;
+        if (star.alpha > 1 || star.alpha < 0) star.speed = -star.speed;
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${Math.abs(star.alpha)})`;
+        ctx.fill();
+      });
+      requestAnimationFrame(drawStars);
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    drawStars();
+
+    /* ==========================================================================
+       2. 愛心飄落動畫 (Falling Hearts)
+       ========================================================================== */
+    function createHeart() {
+      const container = document.getElementById('heart-container');
+      const heart = document.createElement('div');
+      heart.classList.add('falling-heart');
+      heart.innerHTML = '❤️';
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.animationDuration = Math.random() * 3 + 4 + 's';
+      heart.style.fontSize = Math.random() * 12 + 10 + 'px';
+      container.appendChild(heart);
+
+      setTimeout(() => { heart.remove(); }, 7000);
+    }
+    setInterval(createHeart, 800);
+
+    /* ==========================================================================
+       3. 開場打字機與閃躲按鈕 (Intro Typewriter & Dodge Button)
+       ========================================================================== */
+    const typeText = "請問... 你是全宇宙最帥、最溫柔、安淇最愛的佳維嗎？✨";
+    let typeIdx = 0;
+
+    function typeWriter() {
+      if (typeIdx < typeText.length) {
+        document.getElementById("typewriter").innerHTML += typeText.charAt(typeIdx);
+        typeIdx++;
+        setTimeout(typeWriter, 80);
+      } else {
+        document.getElementById("btn-group").style.display = "flex";
+      }
+    }
+    window.onload = () => { typeWriter(); };
+
+    function dodgeNoBtn() {
+      const btnNo = document.getElementById('btn-no');
+      const randomX = (Math.random() - 0.5) * 200;
+      const randomY = (Math.random() - 0.5) * 200;
+      btnNo.style.transform = `translate(${randomX}px, ${randomY}px)`;
+    }
+
+    function handleChoice(isYes) {
+      if (isYes) {
+        // 嘗試播放音樂
+        const bgm = document.getElementById('bgm');
+        bgm.play().then(() => {
+          document.getElementById('bgm-btn').classList.add('bgm-active');
+        }).catch(() => {});
+
+        // 解鎖主畫面
+        document.getElementById('intro-gate').classList.add('hidden');
+        document.getElementById('main-content').classList.remove('hidden');
+
+        // 觸發彩帶特效
+        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+
+        // 啟動計時器與生成卡片
+        startTimer();
+        generateReasons();
+      }
+    }
+
+    /* ==========================================================================
+       4. 背景音樂控制 (BGM Control)
+       ========================================================================== */
+    function toggleBGM() {
+      const bgm = document.getElementById('bgm');
+      const btn = document.getElementById('bgm-btn');
+      if (bgm.paused) {
+        bgm.play();
+        btn.classList.add('bgm-active');
+      } else {
+        bgm.pause();
+        btn.classList.remove('bgm-active');
+      }
+    }
+
+    /* ==========================================================================
+       5. 在一起時長計時器 (Timer)
+       ========================================================================== */
+    const startDate = new Date('2025-06-14T00:00:00');
+
+    function startTimer() {
+      function update() {
+        const now = new Date();
+        const diff = now - startDate;
+
+        if (diff > 0) {
+          const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+          const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+          const mins = Math.floor((diff / (1000 * 60)) % 60);
+          const secs = Math.floor((diff / 1000) % 60);
+
+          document.getElementById('t-days').innerText = days;
+          document.getElementById('t-hours').innerText = hours;
+          document.getElementById('t-mins').innerText = mins;
+          document.getElementById('t-secs').innerText = secs;
         }
-        setInterval(updateTimer, 1000);
-        updateTimer();
+      }
+      update();
+      setInterval(update, 1000);
+    }
 
-        // --- 🎵 音樂播放器控制 ---
-        function toggleMusic() {
-            const bgm = document.getElementById('bgm');
-            const btn = document.getElementById('musicBtn');
-            if (bgm.paused) {
-                bgm.play();
-                btn.classList.add('playing');
-            } else {
-                bgm.pause();
-                btn.classList.remove('playing');
-            }
-        }
+    /* ==========================================================================
+       6. 互動模組功能 (Letter, Quiz, Reasons, Tickets, Cake, Gift)
+       ========================================================================== */
 
-        // --- 背景星空動畫 ---
-        const canvas = document.getElementById('starfield');
-        const ctx = canvas.getContext('2d');
-        let stars = [];
+    // 開啟信件
+    function openLetter() {
+      document.getElementById('envelope-wrapper').style.display = 'none';
+      document.getElementById('letter-content').classList.remove('hidden');
+      confetti({ particleCount: 50, spread: 60, origin: { y: 0.5 } });
+    }
 
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
+    // 小測驗檢查
+    function checkQuiz(element, isCorrect) {
+      const options = document.querySelectorAll('.quiz-option');
+      const msg = document.getElementById('quiz-msg');
 
-        for (let i = 0; i < 100; i++) {
-            stars.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                size: Math.random() * 2,
-                alpha: Math.random(),
-                speed: Math.random() * 0.015 + 0.005
-            });
-        }
+      options.forEach(opt => opt.onclick = null); // 只能選一次
 
-        function drawStars() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            stars.forEach(star => {
-                star.alpha += star.speed;
-                if (star.alpha > 1 || star.alpha < 0) star.speed = -star.speed;
-                ctx.fillStyle = `rgba(255, 255, 255, ${Math.abs(star.alpha)})`;
-                ctx.beginPath();
-                ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-                ctx.fill();
-            });
-            requestAnimationFrame(drawStars);
-        }
-        drawStars();
+      if (isCorrect) {
+        element.classList.add('correct');
+        msg.innerText = "答對了！你在安淇心裡就是最完美的！💯❤️";
+        msg.classList.remove('hidden');
+        confetti({ particleCount: 80, spread: 70 });
+      } else {
+        element.classList.add('wrong');
+        msg.innerText = "答案不對喔～明明是全選！選 D 才是正解！😜";
+        msg.classList.remove('hidden');
+      }
+    }
 
-        // --- 💕 飄落愛心動畫特效 ---
-        function createHeartParticle() {
-            const container = document.getElementById('heartsContainer');
-            const heart = document.createElement('div');
-            heart.classList.add('heart-particle');
-            heart.innerHTML = ['♥', '💖', '✨', '🌸'][Math.floor(Math.random() * 4)];
-            heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.fontSize = (Math.random() * 12 + 10) + 'px';
-            heart.style.animationDuration = (Math.random() * 4 + 4) + 's';
-            
-            container.appendChild(heart);
-            setTimeout(() => { heart.remove(); }, 8000);
-        }
-        setInterval(createHeartParticle, 600);
+    // 動態生成 10 個喜歡理由翻牌
+    const reasons = [
+      "1. 總是很溫柔地聽我說話",
+      "2. 記得我喜歡吃的東西",
+      "3. 抱起來超級舒服溫暖",
+      "4. 做事情專注又可靠",
+      "5. 常常逗我笑、讓我開心",
+      "6. 給我滿滿的安全感",
+      "7. 牽手時總是握得很緊",
+      "8. 生氣時總是包容我",
+      "9. 眼神裡滿滿都是我",
+      "10. 因為你是佳維，無可取代！"
+    ];
 
-        // --- 通用打字機動畫函式 ---
-        function typeWriterElement(element, speed = 80) {
-            const originalText = element.getAttribute('data-text') || element.innerText;
-            element.setAttribute('data-text', originalText);
-            element.innerText = '';
-            element.style.opacity = '1';
-            
-            let i = 0;
-            function type() {
-                if (i < originalText.length) {
-                    element.innerText += originalText.charAt(i);
-                    i++;
-                    setTimeout(type, speed);
-                }
-            }
-            type();
-        }
+    function generateReasons() {
+      const grid = document.getElementById('reason-grid');
+      grid.innerHTML = '';
+      reasons.forEach((text, i) => {
+        const card = document.createElement('div');
+        card.classList.add('flip-card');
+        card.onclick = () => card.classList.toggle('flipped');
+        card.innerHTML = `
+          <div class="flip-card-inner">
+            <div class="flip-card-front">Reason #${i + 1} 💌</div>
+            <div class="flip-card-back">${text}</div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
 
-        // --- 滾動觸發各區塊開頭打字機效果 ---
-        const observerOptions = {
-            root: null,
-            threshold: 0.3
-        };
+    // 兌換券使用
+    function useTicket(btn) {
+      btn.innerText = "已兌換";
+      btn.classList.add('used');
+      btn.onclick = null;
+      showModal("🎉 兌換成功！", "安淇已收到申請，請佳維憑此截圖向安淇隨時兌換！");
+      confetti({ particleCount: 50, spread: 50 });
+    }
 
-        const observer = new IntersectionObserver((entries, obs) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    typeWriterElement(entry.target);
-                    obs.unobserve(entry.target); // 動畫只執行一次
-                }
-            });
-        }, observerOptions);
+    // 吹熄蠟燭
+    let candleBlown = false;
+    function blowCandle() {
+      if (!candleBlown) {
+        document.getElementById('flame').style.display = 'none';
+        document.getElementById('candle-msg').innerText = "✨ 許願成功！願佳維所有的願望都實現！✨";
+        candleBlown = true;
+        confetti({ particleCount: 120, spread: 100, origin: { y: 0.4 } });
+      }
+    }
 
-        function initSectionTypewriters() {
-            const elements = document.querySelectorAll('.typewriter-header');
-            elements.forEach(el => {
-                el.setAttribute('data-text', el.innerText);
-                el.innerText = ''; // 預先清空
-                observer.observe(el);
-            });
-        }
+    // 發送悄悄話
+    function sendMsg() {
+      const val = document.getElementById('user-msg').value;
+      if (val.trim() === "") {
+        showModal("提示", "請輸入一些想對安淇說的話吧～");
+      } else {
+        showModal("💌 悄悄話已送出！", "安淇已經收到了！請當面親她一下解鎖回覆 💕");
+        document.getElementById('user-msg').value = "";
+      }
+    }
 
-        // --- 1. 開場打字與選擇邏輯 ---
-        const introTexts = ["這不是一個普通的生日網站", "是我為你準備的一段旅程..."];
-        let textIndex = 0;
-        let charIndex = 0;
-        const typewriterEl = document.getElementById('typewriter');
-        const choiceBox = document.getElementById('choiceBox');
-        const warningMsg = document.getElementById('warningMsg');
+    // 彈窗 Modal 控制
+    function showModal(title, text) {
+      document.getElementById('modal-title').innerText = title;
+      document.getElementById('modal-body').innerText = text;
+      document.getElementById('modal-overlay').classList.remove('hidden');
+    }
 
-        function typeWriter() {
-            if (textIndex < introTexts.length) {
-                if (charIndex < introTexts[textIndex].length) {
-                    typewriterEl.innerHTML += introTexts[textIndex].charAt(charIndex);
-                    charIndex++;
-                    setTimeout(typeWriter, 120);
-                } else {
-                    setTimeout(() => {
-                        if (textIndex < introTexts.length - 1) {
-                            typewriterEl.innerHTML += '<br>';
-                        }
-                        textIndex++;
-                        charIndex = 0;
-                        typeWriter();
-                    }, 600);
-                }
-            } else {
-                choiceBox.classList.add('show');
-            }
-        }
+    function closeModal() {
+      document.getElementById('modal-overlay').classList.add('hidden');
+    }
 
-        window.onload = () => {
-            typeWriter();
-            initSectionTypewriters();
-        };
-
-        function handleChoice(isYes) {
-            if (isYes) {
-                const intro = document.getElementById('intro-screen');
-                intro.style.opacity = '0';
-                setTimeout(() => intro.style.display = 'none', 1000);
-                document.getElementById('bgm').play().then(() => {
-                    document.getElementById('musicBtn').classList.add('playing');
-                }).catch(() => {});
-            } else {
-                warningMsg.innerText = "你還敢不開始啊！😤 哼，快點選「是」！";
-            }
-        }
-
-        // --- 2. 信封開啟與信件打字機效果 ---
-        function openEnvelope() {
-            document.getElementById('envIcon').style.transform = 'scale(1.2) rotate(-10deg)';
-            document.getElementById('envHint').style.display = 'none';
-            const letter = document.getElementById('letterPaper');
-            letter.style.display = 'block';
-            
-            // 開啟手寫信時，套用專屬打字效果
-            typeWriterElement(letter, 40);
-
-            confetti({ particleCount: 40, spread: 50, origin: { y: 0.5 } });
-        }
-
-        // --- 3. 時間軸展開 ---
-        function toggleTimeline(index) {
-            const cards = document.querySelectorAll('.timeline-card');
-            const card = cards[index];
-            if (card.style.display === 'block') {
-                card.style.display = 'none';
-            } else {
-                card.style.display = 'block';
-                typeWriterElement(card, 30); // 展開時打字顯示內文
-            }
-        }
-
-        // --- 🧩 愛情小測驗判斷 ---
-        function checkQuiz(btn, isCorrect, qNum) {
-            const parent = btn.parentElement;
-            const buttons = parent.querySelectorAll('.quiz-option-btn');
-            const feedback = document.getElementById(`quiz-feedback-${qNum}`);
-
-            buttons.forEach(b => b.disabled = true);
-
-            if(isCorrect) {
-                btn.classList.add('correct');
-                feedback.innerHTML = "🎉 答對了！佳維真的很了解安淇！";
-                feedback.style.color = "#2ecc71";
-                confetti({ particleCount: 30, spread: 60, origin: { y: 0.7 } });
-            } else {
-                btn.classList.add('wrong');
-                feedback.innerHTML = "哼哼！答錯了喔～快再想想！😏";
-                feedback.style.color = "#e74c3c";
-                setTimeout(() => {
-                    buttons.forEach(b => b.disabled = false);
-                    btn.classList.remove('wrong');
-                }, 1500);
-            }
-        }
-
-        // --- 5. 抽獎邏輯 ---
-        const tieredPrizes = [
-            { title: "🥇 一等獎", desc: "任你指定一個願望 + 一次約會由我全包！" },
-            { title: "🥈 二等獎", desc: "陪你做任何你想做的事一整天 ✨" },
-            { title: "🥉 三等獎", desc: "無條件聽你抱怨 30 分鐘 + 宵夜點餐券 🍜" },
-            { title: "🎖️ 四等獎", desc: "無條件大擁抱兌換券 ×1 🤍" },
-            { title: "🎗️ 五等獎", desc: "安淇專屬甜蜜親親兌換券 💋" }
-        ];
-        let drawCount = 0;
-        const maxDraws = 3;
-
-        function drawPrize() {
-            const resultBox = document.getElementById('prizeResult');
-            const titleEl = document.getElementById('prizeTitle');
-            const descEl = document.getElementById('prizeDesc');
-            const countEl = document.getElementById('prizeCount');
-
-            if (drawCount >= maxDraws) {
-                titleEl.innerText = "🔒 抽獎機會已用完";
-                descEl.innerText = "要把機會留在最棒的時刻，好好珍惜抽到的特權卡喔 💕";
-                countEl.innerText = "";
-                resultBox.style.display = 'block';
-                return;
-            }
-
-            drawCount++;
-            const randomPrize = tieredPrizes[Math.floor(Math.random() * tieredPrizes.length)];
-            titleEl.innerText = randomPrize.title;
-            descEl.innerText = randomPrize.desc;
-            countEl.innerText = `剩餘抽獎次數：${maxDraws - drawCount} 次`;
-            resultBox.style.display = 'block';
-
-            confetti({ particleCount: 40, spread: 60, origin: { y: 0.7 } });
-        }
-
-        // --- 6. 頒獎典禮 ---
-        function revealAward() {
-            document.getElementById('revealBtn').style.display = 'none';
-            const awardRes = document.getElementById('awardResult');
-            awardRes.style.display = 'block';
-            confetti({ particleCount: 90, spread: 80, origin: { y: 0.65 } });
-        }
-
-        // --- 7. 吹蠟燭 ---
-        function blowCandle() {
-            document.getElementById('flame').classList.add('off');
-            document.getElementById('candleHint').style.display = 'none';
-            const wishText = document.getElementById('wishText');
-            wishText.classList.add('show');
-            typeWriterElement(wishText, 60);
-            confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
-        }
-
-        // --- 💬 送出悄悄話邏輯 ---
-        function sendReply() {
-            const input = document.getElementById('replyText');
-            const status = document.getElementById('replyStatus');
-            if(input.value.trim() === "") {
-                status.innerText = "記得寫一點話再送出喔！";
-                status.style.display = 'block';
-                return;
-            }
-            status.innerText = "安淇已經收到了！請當面親她一下解鎖回覆 💕";
-            status.style.display = 'block';
-            confetti({ particleCount: 60, spread: 60, origin: { y: 0.8 } });
-        }
-
-        // --- 9. 實體禮物彈窗控制 ---
-        function openGiftModal() {
-            confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
-            document.getElementById('giftModal').style.display = 'flex';
-        }
-
-        function closeGiftModal() {
-            document.getElementById('giftModal').style.display = 'none';
-        }
-    </script>
+    function openGiftModal() {
+      showModal("🎁 生日驚喜禮物", "實體禮物安淇已經偷偷準備好囉！請向安淇領取你的專屬生日大禮包！❤️");
+      confetti({ particleCount: 150, spread: 90 });
+    }
+  </script>
 </body>
 </html>
